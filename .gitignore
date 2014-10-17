@@ -1,5 +1,18 @@
+###### R ######
 .Rproj.user
 .Rhistory
 .RData
+<<<<<<< HEAD
 git_mapa.Rproj
+=======
+.Rproj
+
+###### imagens ######
+.png
+.pdf
+
+###### planilhas ######
+.xls
+.xlsx
+>>>>>>> a62cda753244aa2e8310abe0ec4606ff4ad86ccf
 .csv
