@@ -1,3 +1,14 @@
+###### R ######
 .Rproj.user
 .Rhistory
 .RData
+.Rproj
+
+###### imagens ######
+.png
+.pdf
+
+###### planilhas ######
+.xls
+.xlsx
+.csv
