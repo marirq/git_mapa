@@ -14,7 +14,33 @@ str(ac)
 ac$lat <- as.numeric(ac$lat); ac$long <- as.numeric(ac$long)
 str(ac)
 
-grep('º',ac$lat,value=TRUE) # esta em decimal
+grep('º',ac$lat,value=TRUE) # vendo se esta em decimal
+
+# adicionar coluna para dar cor as propriedades pela atvdd
+str(ac)
+levels(ac$Atividade) # "1", "46", "Produtor Independente"
+ac$Atividade <- as.character(ac$Atividade)
+ac$Atividade  <- str_trim(ac$Atividade) # retirando espacos em branco antes e depois
+ac$Atividade <- as.factor(ac$Atividade)
+
+ac$cor <- NA
+str(ac)
+ac[which(ac$Atividade=="1"),'cor']=1
+ac[which(ac$Atividade=="46"),'cor']=2
+ac[which(ac$Atividade=="Produtor Independente"),'cor']=3
+
+#names(am)[c(11,12)] <- c('lat_dec','long_dec')
+###### plotar mapa e pontos pra ver se algum caiu fora do AM
+#install.packages('ggmap')
+library(ggmap)
+#ac$cor <- as.integer(ac$cor)
+str(ac)
+# mapa
+map_ac <- 'State of Acre'
+ac_map <- qmap(map_ac,zoom=5)
+ac_map+geom_point(aes(x = long, y = lat, color = cor ), 
+                  data = ac)
+
 
 ###################### AM ######################
 am <- read.csv('AM.csv',header=TRUE,sep=';')
@@ -93,7 +119,7 @@ am$LAT <- convert(e);am$LONG <- convert(ee)
 is.numeric(am$LAT);is.numeric(am$LONG)
 am$LAT;am$LONG
 
-# precisa arrumar o [22] refazer a partir do 'e' ou 'ee' 
+# precisa arrumar o am$LAT[22] refazer a partir do 'e' ou 'ee' 
 y <- gsub(u2[1],'T',am$lat[22])
 y <- gsub(u2[2],'T',y)
 y <- gsub(u2[3],'T',y)
@@ -108,6 +134,48 @@ am$LAT[22] <- abs(dec[1])+dec[2]/60+0/3600
 # colocar os valores na coluna certa
 am$lat <- am$LAT;am$long <- am$LONG
 am$lat;am$long
+
+# mudar o sinal
+str(am)
+am$lat <- (am$lat)*(-1);am$long <- (am$long)*(-1)
+am$lat;am$long
+
+# adicionar coluna para dar cor as propriedades
+str(am)
+levels(am$Classificação) # "Granja de Aves de Corte Comerciais" "Granja de Aves Poedeiras de Ovos Comerciais" 
+# "Granja Matrizeira", "Granja Ovos Caipira"
+am$Classificação <- as.character(am$Classificação)
+am$Classificação  <- str_trim(am$Classificação) # retirando espacos em branco antes e depois
+levels(am$Classificação)
+am$Classificação <- as.factor(am$Classificação)
+am$Classificação[14:35]
+am$cor <- NA
+str(am)
+am[which(am$Classificação=="Granja de Aves de Corte Comerciais"),'cor']=1
+am[which(am$Classificação=="Granja de Aves Poedeiras de Ovos Comerciais"),'cor']=2
+am[which(am$Classificação=="Granja Matrizeira"),'cor']=3
+am[which(am$Classificação=="Granja Ovos Caipira"),'cor']=4
+am[which(am$Classificação=="Granja de Aves Poedeiras de Ovos Comerciais"),]
+
+names(am)[c(11,12)] <- c('lat_dec','long_dec')
+###### plotar mapa e pontos pra ver se algum caiu fora do AM
+#install.packages('ggmap')
+library(ggmap)
+am$cor <- as.integer(am$cor)
+str(am)
+# mapa
+map_am <- 'South America'
+am_map <- qmap(map_am,zoom=4)
+am_map+geom_point(aes(x = long_dec, y = lat_dec , color = cor), 
+                  data = am)
+
+
+###################### BA ######################
+read.csv
+
+
+
+
 
 ###################### Para tranformar em excel depois ######################
 library(xlsx)
