@@ -247,58 +247,134 @@ str(ba)
 
 ba[which(ba$LAT == NaN),]
 class(ba$LAT[78])
-# precisa arrumar o ba$LAT[78,90,92,151,291,348,360] 
-# e ba$LONG[90,] refazer a partir do 'e' ou 'ee' 
-y <- gsub(u2[1],'T',am$lat[22])
+# precisa arrumar os NAs em ba$LAT[78,90,92,151,291,348,360] e ba$LONG[90,282] refazer a partir do 'e' ou 'ee' 
+y <- gsub(u2[1],'T',ba$lat[78])
 y <- gsub(u2[2],'T',y)
 y <- gsub(u2[3],'T',y)
 y <- gsub(u2[4],'T',y)
 y <- gsub(u2[5],'T',y)
 y <- gsub(u2[6],'T',y)
+y <- gsub('º','T',y)
 y <- strsplit(y,'T+')
-
-dec=c(as.numeric(y[[1]][1]),as.numeric(y[[1]][2]))#,as.numeric(e[[1]][3]))
-am$LAT[22] <- abs(dec[1])+dec[2]/60+0/3600
+# ba$LAT[78]
+dec=c(as.numeric(y[[1]][1]),as.numeric(y[[1]][2]),as.numeric(e[[1]][3]))
+ba$LAT[78] <- abs(dec[1])+dec[2]/60+dec[3]/3600
+# ba$LAT[90]
+y <- gsub(u2[1],'T',ba$lat[90])
+y <- gsub(u2[2],'T',y)
+y <- gsub(u2[3],'T',y)
+y <- gsub(u2[4],'T',y)
+y <- gsub(u2[5],'T',y)
+y <- gsub(u2[6],'T',y)
+y <- gsub('º','T',y)
+y <- strsplit(y,'T+')
+# ba$LAT[90]
+dec=c(as.numeric(y[[1]][1]),as.numeric(y[[1]][2]),as.numeric(e[[1]][3]))
+ba$LAT[90] <- abs(dec[1])+dec[2]/60+dec[3]/3600
+# ba$LAT [92]
+y <- gsub(u2[1],'T',ba$lat[92])
+y <- gsub(u2[2],'T',y)
+y <- gsub(u2[3],'T',y)
+y <- gsub(u2[4],'T',y)
+y <- gsub(u2[5],'T',y)
+y <- gsub(u2[6],'T',y)
+y <- gsub('º','T',y)
+y <- strsplit(y,'T+')
+# ba$LAT[92]
+dec=c(as.numeric(y[[1]][1]),as.numeric(y[[1]][2]),as.numeric(e[[1]][3]))
+ba$LAT[92] <- abs(dec[1])+dec[2]/60+dec[3]/3600
+# ba$LAT[151]
+y <- gsub(u2[1],'T',ba$lat[151])
+y <- gsub(u2[2],'T',y)
+y <- gsub(u2[3],'T',y)
+y <- gsub(u2[4],'T',y)
+y <- gsub(u2[5],'T',y)
+y <- gsub(u2[6],'T',y)
+y <- gsub('º','T',y)
+y <- strsplit(y,'T+')
+# ba$LAT[151]
+dec=c(as.numeric(y[[1]][1]),as.numeric(y[[1]][2]),as.numeric(e[[1]][3]))
+ba$LAT[151] <- abs(dec[1])+dec[2]/60+dec[3]/3600
+# ba$LAT[291]
+y <- gsub(u2[1],'T',ba$lat[291])
+y <- gsub(u2[2],'T',y)
+y <- gsub(u2[3],'T',y)
+y <- gsub(u2[4],'T',y)
+y <- gsub(u2[5],'T',y)
+y <- gsub(u2[6],'T',y)
+y <- gsub('º','T',y)
+y <- strsplit(y,'T+')
+# ba$LAT[291]
+dec=c(as.numeric(y[[1]][1]),as.numeric(y[[1]][2]),as.numeric(e[[1]][3]))
+ba$LAT[291] <- abs(dec[1])+dec[2]/60+dec[3]/3600
+# ba$LAT[348]
+a <- c(substr(ba$lat[348],1,2),substr(ba$lat[348],4,5),substr(ba$lat[348],6,9))
+# ba$LAT[348]
+dec=c(as.numeric(a[[1]]),as.numeric(a[[2]]),as.numeric(a[[3]]))
+ba$LAT[348] <- abs(dec[1])+dec[2]/60+dec[3]/3600
+# ba$LAT[360]
+y <- gsub(u2[1],'T',ba$lat[260])
+y <- gsub(u2[2],'T',y)
+y <- strsplit(y,'T+')
+# ba$LAT[291]
+dec=c(as.numeric(y[[1]][1]),as.numeric(y[[1]][2]),as.numeric(e[[1]][3]))
+ba$LAT[360] <- abs(dec[1])+dec[2]/60+dec[3]/3600
+ba$LAT # removi todos NAs de ba$LAT
+# ba$LONG[90,282] refazer a partir do 'e' ou 'ee' 
+y <- gsub(u2[1],'T',ba$long[90])
+y <- gsub(u2[2],'T',y)
+y <- gsub(u2[3],'T',y)
+y <- gsub('º','T',y)
+y <- strsplit(y,'T+')
+# ba$LONG[90]
+dec=c(as.numeric(y[[1]][1]),as.numeric(y[[1]][2]),as.numeric(e[[1]][3]))
+ba$LONG[90] <- abs(dec[1])+dec[2]/60+dec[3]/3600
+# ba$LONG[282]
+y <- gsub(u2[1],'T',ba$long[282])
+y <- gsub(u2[2],'T',y)
+y <- gsub('º','T',y)
+y <- strsplit(y,'T+')
+# ba$LONG[282]
+dec=c(as.numeric(y[[1]][1]),as.numeric(y[[1]][2]),as.numeric(e[[1]][3]))
+ba$LONG[282] <- abs(dec[1])+dec[2]/60+dec[3]/3600
+ba$LAT;ba$LONG # #conferindo se removi todos NAs
 
 # colocar os valores na coluna certa
-am$lat <- am$LAT;am$long <- am$LONG
-am$lat;am$long
+ba$lat <- ba$LAT;ba$long <- ba$LONG
+ba$lat;ba$long
 
 # mudar o sinal
-str(am)
-am$lat <- (am$lat)*(-1);am$long <- (am$long)*(-1)
-am$lat;am$long
+str(ba)
+ba$lat <- (ba$lat)*(-1);ba$long <- (ba$long)*(-1)
+ba$lat;ba$long
 
 # adicionar coluna para dar cor as propriedades
-str(am)
-levels(am$Classificação) # "Granja de Aves de Corte Comerciais" "Granja de Aves Poedeiras de Ovos Comerciais" 
-# "Granja Matrizeira", "Granja Ovos Caipira"
-am$Classificação <- as.character(am$Classificação)
-am$Classificação  <- str_trim(am$Classificação) # retirando espacos em branco antes e depois
-levels(am$Classificação)
-am$Classificação <- as.factor(am$Classificação)
-am$Classificação[14:35]
-am$cor <- NA
-str(am)
-am[which(am$Classificação=="Granja de Aves de Corte Comerciais"),'cor']=1
-am[which(am$Classificação=="Granja de Aves Poedeiras de Ovos Comerciais"),'cor']=2
-am[which(am$Classificação=="Granja Matrizeira"),'cor']=3
-am[which(am$Classificação=="Granja Ovos Caipira"),'cor']=4
-am[which(am$Classificação=="Granja de Aves Poedeiras de Ovos Comerciais"),]
+str(ba)
+ba$CLASSIFICAÇÃO <- as.factor(ba$CLASSIFICAÇÃO)
+str(ba)
+levels(ba$CLASSIFICAÇÃO) # "733" "748" "749" "788"
+ba$cor <- NA
+str(ba)
+ba[which(ba$CLASSIFICAÇÃO=="733"),'cor']=1
+ba[which(ba$CLASSIFICAÇÃO=="748"),'cor']=2
+ba[which(ba$CLASSIFICAÇÃO=="749"),'cor']=3
+ba[which(ba$CLASSIFICAÇÃO=="788"),'cor']=4
 
-names(am)[c(11,12)] <- c('lat_dec','long_dec')
+
 ###### plotar mapa e pontos pra ver se algum caiu fora do AM
 #install.packages('ggmap')
 library(ggmap)
-am$cor <- as.integer(am$cor)
-str(am)
+#am$cor <- as.integer(am$cor)
+#str(am)
 # mapa
-map_am <- 'South America'
-am_map <- qmap(map_am,zoom=4)
-am_map+geom_point(aes(x = long_dec, y = lat_dec , color = cor), 
-                  data = am)
+map_ba <- 'State of Bahia'
+ba_map <- qmap(map_ba,zoom=7)
+ba_map+geom_point(aes(x = long, y = lat , color = cor), 
+                  data = ba)
 
 
+###################### CE ######################
+ce <- read.csv('')
 
 ###################### Para tranformar em excel depois ######################
 library(xlsx)
@@ -307,3 +383,9 @@ getwd()
 head(am)
 am2 <- gsub(NA,'00',am)
 head(am2)
+
+
+
+################################ Sistemas de Coords ################################################
+# O sistema de coordenada (DATUM)  em Grau, do Google Earth e da maioria dos mapas na internet é a WGS84
+
