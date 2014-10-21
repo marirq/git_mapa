@@ -487,6 +487,113 @@ ce$lat;ce$long
 ce$lat[15] <- ce$lat[15]/100000 #faltava um ponto, resolvendo a divisao deu certo
 
 
+###################### DF ######################
+df <- read.csv('DF.csv',header=TRUE,sep=';')
+str(df)
+df$UF_ESTABEL <- as.character(df$UF_ESTABEL)
+df[which(df$UF_ESTABEL=='DISTRITO FEDERAL'),'UF_ESTABEL']='DF'
+
+names(df)[c(11,12)] <- c('lat','long')
+names(df)
+
+df$lat <- as.character(df$lat);df$long <- as.character(df$long)
+str(df)
+df$lat  <- str_trim(df$lat);df$long  <- str_trim(df$long) # retirando espacos em branco antes e depois
+df$lat <- sub(',','.',df$lat);df$long <- sub(',','.',df$long)
+str(df)
+
+q1 <- df$lat;q11 <- df$long # verificando as coordenadas
+a1 <- grep('[^[:alnum:]]',q1) # vejo as linhas que tem numero e ponto
+a11 <- grep('[^[:alnum:]]',q11) # vejo as linhas que tem numero e ponto
+length(q1);length(a1);length(q11);length(a11) # comparo o tam do original com o que eu vi que tem ponto e numero
+
+df$lat[-a1] # linha com valor: "155447"
+df$long[-a11] # linhas com valores "481501"  "4752531" "48102"
+
+df[which(df$lat=="155447"),] # df$lat[109]
+df[which(df$long=="481501"),] # df$long[109]
+df[which(df$long=="4752531"),] # df$long[115]
+df[which(df$long=="48102"),] # df$long[185]
+is.numeric(df$lat);is.numeric(df$long)
+df$lat <- as.numeric(df$lat);df$long <- as.numeric(df$long)
+
+# colocar ponto no lugar certo
+df$lat[109] <- df$lat[109]/10000
+df$long[109] <- df$long[109]/10000
+df$long[115] <- df$long[115]/100000
+df$long[185] <- df$long[185]/1000
+
+q1 <- df$lat;q11 <- df$long # verificando as coordenadas
+a1 <- grep('[^[:alnum:]]',q1) # vejo as linhas que tem numero e ponto
+a11 <- grep('[^[:alnum:]]',q11) # vejo as linhas que tem numero e ponto
+length(q1);length(a1);length(q11);length(a11) # comparo o tam do original com o que eu vi que tem ponto e numero
+
+is.numeric(df$lat);is.numeric(df$long)
+df$lat <- df$lat*(-1);df$long <- df$long*(-1)
+df$lat;df$long
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+####### Ver que simbolos tem 
+q1 <- df$lat;q11 <- df$long
+head(q1);head(q11)
+q1;q11
+q2 <- q1[1] # o primeiro linha da coluna  q escolhi
+for (i in 2:length(q1)) { # do segundo da coluna (pq o primeiro ja pequei) ate o comprimento da coluna
+  q2 <- paste0(q2, q1[i]) # juntando todas as linhas
+}
+q22 <- q11[1] # o primeiro linha da coluna  q escolhi
+for (i in 2:length(q11)) { # do segundo da coluna (pq o primeiro ja pequei) ate o comprimento da coluna
+  q22 <- paste0(q22, q11[i]) # juntando todas as linhas
+}
+
+q3 <- NA # crio um vetor vazio
+for (i in 1:nchar(q2)) { # faco um for de 1 ate o numero de caracteres do meu vetor em conjunto
+  q3 <- c(q3, substr(q2, i, i)) #  junto o q3 (que é NA no início)mais o q2 sendo que eu substituo o carcter 1 no primeiro lugar, depois o 2 no segundo e sucessivamente
+}
+q3 <- q3[-1] # tiro o primeiro elemento que era NA
+q33 <- NA # crio um vetor vazio
+for (i in 1:nchar(q22)) { # faco um for de 1 ate o numero de caracteres do meu vetor em conjunto
+  q33 <- c(q33, substr(q22, i, i)) #  junto o q3 (que é NA no início)mais o q2 sendo que eu substituo o carcter 1 no primeiro lugar, depois o 2 no segundo e sucessivamente
+}
+q33 <- q33[-1] # tiro o primeiro elemento que era NA
+
+q4 <- grep('[^[:alnum:]]', q3, value = T) # pega os simbolos
+q44 <- grep('[^[:alnum:]]', q33, value = T) # pega os simbolos
+
+u1 <- unique(q4) # tiro os repetidos, pra ver quais simbolos tenho de um jeito + limpo
+u11 <- unique(q44) # tiro os repetidos, pra ver quais simbolos tenho de um jeito + limpo
+
+u2 <- u1[-3] # tirando o simbolo de ponto
+u22 <- u11[-3] # tirando o simbolo de ponto
+
+# tenho que tirar um de cada vez
+e <- gsub(u2[1],'T',ba$lat);ee <- gsub(u22[1],'T',ba$long)
+e <- gsub(u2[2],'T',e);ee <- gsub(u22[2],'T',ee)
+e <- gsub(u2[3],'T',e);ee <- gsub(u22[3],'T',ee)
+e <- gsub(u2[4],'T',e);ee <- gsub(u22[4],'T',ee)
+e <- gsub(u2[5],'T',e);ee <- gsub(u22[5],'T',ee)
+e <- gsub(u2[6],'T',e);ee <- gsub(u22[6],'T',ee)
+
+# separando pelo simbolo que coloquei
+e <- strsplit(e,'T+')
+ee <- strsplit(ee,'T+')
+
+
+
+
+
 ###################### Para tranformar em excel depois ######################
 library(xlsx)
 write.xlsx(am, "/media/mariana/MRQ - HD externo/DOUTORADO/projeto_aves/banco_dout/am.xlsx")
