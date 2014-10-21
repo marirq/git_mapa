@@ -454,6 +454,8 @@ f;ff
 ce$lat[c(3,21:50,52:64,66)]  <- f
 ce$long[c(3,21:50,52:64,66)] <- ff
 ce$lat;ce$long
+is.numeric(ce$lat);is.numeric(ce$long)
+ce$lat <- as.numeric(ce$lat);ce$long <- as.numeric(ce$long)
 
 # adicionar coluna para dar cor as propriedades
 str(ce)
@@ -468,18 +470,21 @@ ce[which(ce$X.Classificação=="742"),'cor']=4
 ce[which(ce$X.Classificação=="748"),'cor']=5
 ce[which(ce$X.Classificação=="749"),'cor']=6
 str(ce)
-ce$cor <- as.integer(ce$cor)
+
+ce$lat;ce$long
+
 
 ###### plotar mapa e pontos pra ver se algum caiu fora do AM
 #install.packages('ggmap')
 library(ggmap)
 map_ce <- 'State of Ceará'
 ce_map <- qmap(map_ce,zoom=7)
-ce_map+geom_point(aes(x = long, y = lat , color = cor), 
+w <- ce_map+geom_point(aes(x = long, y = lat , color = cor), 
                   data = ce)
-
-
-
+ggplot_build(w) # pra descobrir a linha removida: ponto ce$lat[15]
+ce$lat[15]
+ce$lat;ce$long
+ce$lat[15] <- ce$lat[15]/100000 #faltava um ponto, resolvendo a divisao deu certo
 
 
 ###################### Para tranformar em excel depois ######################
