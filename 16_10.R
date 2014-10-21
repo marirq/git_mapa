@@ -374,7 +374,113 @@ ba_map+geom_point(aes(x = long, y = lat , color = cor),
 
 
 ###################### CE ######################
-ce <- read.csv('')
+ce <- read.csv('CE2.csv',header=TRUE,sep=';')
+str(ce)
+levels(ce$LATITUDE_S..DECIMAL.)
+names(ce)[c(13,16)] <- c('lat','long')
+names(ce)
+
+# removendo linhas sem coordenada
+str(ce)
+levels(ce$lat)
+ce <- ce[which(ce$lat != ""),]
+
+ce$lat <- as.character(ce$lat); ce$long <- as.character(ce$long)
+str(ce)
+ce$lat <- sub(',','.',ce$lat);ce$long <- sub(',','.',ce$long)
+str(ce)
+
+#install.packages("stringr", dependencies=TRUE)
+require(stringr)
+ce$lat  <- str_trim(ce$lat);ce$long  <- str_trim(ce$long) # retirando espacos em branco antes e depois
+str(ce)
+
+####### Ver que simbolos tem 
+q1 <- ce$lat;q11 <- ce$long
+head(q1);head(q11)
+
+q2 <- q1[1] # o primeiro linha da coluna  q escolhi
+for (i in 2:length(q1)) { # do segundo da coluna (pq o primeiro ja pequei) ate o comprimento da coluna
+  q2 <- paste0(q2, q1[i]) # juntando todas as linhas
+}
+q22 <- q11[1] # o primeiro linha da coluna  q escolhi
+for (i in 2:length(q11)) { # do segundo da coluna (pq o primeiro ja pequei) ate o comprimento da coluna
+  q22 <- paste0(q22, q11[i]) # juntando todas as linhas
+}
+
+q3 <- NA # crio um vetor vazio
+for (i in 1:nchar(q2)) { # faco um for de 1 ate o numero de caracteres do meu vetor em conjunto
+  q3 <- c(q3, substr(q2, i, i)) #  junto o q3 (que é NA no início)mais o q2 sendo que eu substituo o carcter 1 no primeiro lugar, depois o 2 no segundo e sucessivamente
+}
+q3 <- q3[-1] # tiro o primeiro elemento que era NA
+q33 <- NA # crio um vetor vazio
+for (i in 1:nchar(q22)) { # faco um for de 1 ate o numero de caracteres do meu vetor em conjunto
+  q33 <- c(q33, substr(q22, i, i)) #  junto o q3 (que é NA no início)mais o q2 sendo que eu substituo o carcter 1 no primeiro lugar, depois o 2 no segundo e sucessivamente
+}
+q33 <- q33[-1] # tiro o primeiro elemento que era NA
+
+q4 <- grep('[^[:digit:]]', q3, value = T) # pega os simbolos
+q44 <- grep('[^[:digit:]]', q33, value = T) # pega os simbolos
+
+u1 <- unique(q4) # tiro os repetidos, pra ver quais simbolos tenho de um jeito + limpo
+u11 <- unique(q44) # tiro os repetidos, pra ver quais simbolos tenho de um jeito + limpo
+
+u2 <- u1[-c(1,2)] # tiro o ponto e o negativo
+u22 <- u11[-c(1,2)] # tiro o ponto e o negativo
+
+d1 <- grep('^-',ce$lat) # vejo em que linhas estao os certos
+d11 <- grep('^-',ce$long) # vejo em que linhas estao os certos
+
+# tenho que tirar um de cada vez e dps converter
+e <- ce$lat[-d1];ee <- ce$long[-d11] # tiro os que nao irei converter e comeco a mudar os simbolos
+e <- gsub(u2[1],'T',e);ee <- gsub(u22[1],'T',ee)
+e <- gsub(u2[2],'T',e);ee <- gsub(u22[2],'T',ee)
+ee <- gsub(u22[3],'T',ee)
+e;ee
+
+# separando pelo simbolo que coloquei
+e <- strsplit(e,'T+')
+ee <- strsplit(ee,'T+')
+
+# antes pra ver se todas deram certo nomeia por 'f' e 'ff'
+f <- convert(e);ff <- convert(ee) 
+is.numeric(f);is.numeric(ff)
+f;ff
+# trocando o sinal
+f <- f*(-1);ff <- ff*(-1)
+f;ff
+
+# colocando os convertidos no lugar certo: ce$lat e ce$long [c(3,21:50,52:64,66)] 
+ce$lat[c(3,21:50,52:64,66)]  <- f
+ce$long[c(3,21:50,52:64,66)] <- ff
+ce$lat;ce$long
+
+# adicionar coluna para dar cor as propriedades
+str(ce)
+ce$X.Classificação <- as.factor(ce$X.Classificação)
+levels(ce$X.Classificação) # "732" "733" "737" "742" "748" "749"
+ce$cor <- NA
+str(ce)
+ce[which(ce$X.Classificação=="732"),'cor']=1
+ce[which(ce$X.Classificação=="733"),'cor']=2
+ce[which(ce$X.Classificação=="737"),'cor']=3
+ce[which(ce$X.Classificação=="742"),'cor']=4
+ce[which(ce$X.Classificação=="748"),'cor']=5
+ce[which(ce$X.Classificação=="749"),'cor']=6
+str(ce)
+ce$cor <- as.integer(ce$cor)
+
+###### plotar mapa e pontos pra ver se algum caiu fora do AM
+#install.packages('ggmap')
+library(ggmap)
+map_ce <- 'State of Ceará'
+ce_map <- qmap(map_ce,zoom=7)
+ce_map+geom_point(aes(x = long, y = lat , color = cor), 
+                  data = ce)
+
+
+
+
 
 ###################### Para tranformar em excel depois ######################
 library(xlsx)
