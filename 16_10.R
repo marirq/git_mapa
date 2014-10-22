@@ -622,7 +622,11 @@ dec=c(as.numeric(e[[418]][1]),as.numeric(e[[418]][2]),as.numeric(e[[418]][3]))
 abs(dec[1])+dec[2]/60+dec[3]/3600
 # o ponto cai no mar
 
+###################### GO ######################
+go <- read.csv('GO.csv',header=TRUE,sep=';')
+str(go)
 
+function(x)
 
 ###################### Para tranformar em excel depois ######################
 library(xlsx)
