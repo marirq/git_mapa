@@ -532,66 +532,16 @@ is.numeric(df$lat);is.numeric(df$long)
 df$lat <- df$lat*(-1);df$long <- df$long*(-1)
 df$lat;df$long
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-####### Ver que simbolos tem 
-q1 <- df$lat;q11 <- df$long
-head(q1);head(q11)
-q1;q11
-q2 <- q1[1] # o primeiro linha da coluna  q escolhi
-for (i in 2:length(q1)) { # do segundo da coluna (pq o primeiro ja pequei) ate o comprimento da coluna
-  q2 <- paste0(q2, q1[i]) # juntando todas as linhas
-}
-q22 <- q11[1] # o primeiro linha da coluna  q escolhi
-for (i in 2:length(q11)) { # do segundo da coluna (pq o primeiro ja pequei) ate o comprimento da coluna
-  q22 <- paste0(q22, q11[i]) # juntando todas as linhas
-}
-
-q3 <- NA # crio um vetor vazio
-for (i in 1:nchar(q2)) { # faco um for de 1 ate o numero de caracteres do meu vetor em conjunto
-  q3 <- c(q3, substr(q2, i, i)) #  junto o q3 (que é NA no início)mais o q2 sendo que eu substituo o carcter 1 no primeiro lugar, depois o 2 no segundo e sucessivamente
-}
-q3 <- q3[-1] # tiro o primeiro elemento que era NA
-q33 <- NA # crio um vetor vazio
-for (i in 1:nchar(q22)) { # faco um for de 1 ate o numero de caracteres do meu vetor em conjunto
-  q33 <- c(q33, substr(q22, i, i)) #  junto o q3 (que é NA no início)mais o q2 sendo que eu substituo o carcter 1 no primeiro lugar, depois o 2 no segundo e sucessivamente
-}
-q33 <- q33[-1] # tiro o primeiro elemento que era NA
-
-q4 <- grep('[^[:alnum:]]', q3, value = T) # pega os simbolos
-q44 <- grep('[^[:alnum:]]', q33, value = T) # pega os simbolos
-
-u1 <- unique(q4) # tiro os repetidos, pra ver quais simbolos tenho de um jeito + limpo
-u11 <- unique(q44) # tiro os repetidos, pra ver quais simbolos tenho de um jeito + limpo
-
-u2 <- u1[-3] # tirando o simbolo de ponto
-u22 <- u11[-3] # tirando o simbolo de ponto
-
-# tenho que tirar um de cada vez
-e <- gsub(u2[1],'T',ba$lat);ee <- gsub(u22[1],'T',ba$long)
-e <- gsub(u2[2],'T',e);ee <- gsub(u22[2],'T',ee)
-e <- gsub(u2[3],'T',e);ee <- gsub(u22[3],'T',ee)
-e <- gsub(u2[4],'T',e);ee <- gsub(u22[4],'T',ee)
-e <- gsub(u2[5],'T',e);ee <- gsub(u22[5],'T',ee)
-e <- gsub(u2[6],'T',e);ee <- gsub(u22[6],'T',ee)
-
-# separando pelo simbolo que coloquei
-e <- strsplit(e,'T+')
-ee <- strsplit(ee,'T+')
-
-
-
+###### plotar mapa e pontos pra ver se algum caiu fora do DF
+#install.packages('ggmap')
+library(ggmap)
+map_df <- 'Distrito Federal, Brazil'
+df_map <- qmap(map_df,zoom=7)
+w <- df_map+geom_point(aes(x = long, y = lat , color = 'red'), 
+                       data = df)
+ggplot_build(w) # pra descobrir a linha removida: ponto df$long[108] - tá o mesmo valor da lat, ta errado
+df$lat[108];df$long[108]
+# tem mto ponto no entorno do DF
 
 
 ###################### Para tranformar em excel depois ######################
@@ -602,7 +552,7 @@ head(am)
 am2 <- gsub(NA,'00',am)
 head(am2)
 
-
+w$data[[4]]
 
 ################################ Sistemas de Coords ################################################
 # O sistema de coordenada (DATUM)  em Grau, do Google Earth e da maioria dos mapas na internet é a WGS84
