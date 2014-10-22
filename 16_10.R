@@ -108,8 +108,7 @@ convert<-function(coord){
   ab <- coord
   for (i in 1:length(coord)){
     dec=c(as.numeric(coord[[i]][1]),as.numeric(coord[[i]][2]),as.numeric(coord[[i]][3]))
-    coord[i]<-abs(dec[1])+dec[2]/60+dec[3]/3600
-    #ab[i]  
+    coord[i]<-abs(dec[1])+dec[2]/60+dec[3]/3600  
   }
   return((as.numeric(coord)))
 }
@@ -542,6 +541,87 @@ w <- df_map+geom_point(aes(x = long, y = lat , color = 'red'),
 ggplot_build(w) # pra descobrir a linha removida: ponto df$long[108] - tá o mesmo valor da lat, ta errado
 df$lat[108];df$long[108]
 # tem mto ponto no entorno do DF
+
+###################### ES ######################
+es <- read.csv('ES.csv',header=T,sep=';')
+str(es)
+names(es)[c(8,9)] <- c('lat','long')
+names(es)
+es$lat <- as.character(es$lat);es$long <- as.character(es$long)
+str(es)
+es$lat <- sub(',','.',es$lat);es$long <- sub(',','.',es$long)
+str(es)
+require(stringr)
+es$lat  <- str_trim(es$lat);es$long  <- str_trim(es$long) # retirando espacos em branco antes e depois
+
+####### Ver que simbolos tem 
+q1 <- es$lat;q11 <- es$long
+head(q1);head(q11)
+
+q2 <- q1[1] # o primeiro linha da coluna  q escolhi
+for (i in 2:length(q1)) { # do segundo da coluna (pq o primeiro ja pequei) ate o comprimento da coluna
+  q2 <- paste0(q2, q1[i]) # juntando todas as linhas
+}
+q22 <- q11[1] # o primeiro linha da coluna  q escolhi
+for (i in 2:length(q11)) { # do segundo da coluna (pq o primeiro ja pequei) ate o comprimento da coluna
+  q22 <- paste0(q22, q11[i]) # juntando todas as linhas
+}
+
+q3 <- NA # crio um vetor vazio
+for (i in 1:nchar(q2)) { # faco um for de 1 ate o numero de caracteres do meu vetor em conjunto
+  q3 <- c(q3, substr(q2, i, i)) #  junto o q3 (que é NA no início)mais o q2 sendo que eu substituo o carcter 1 no primeiro lugar, depois o 2 no segundo e sucessivamente
+}
+q3 <- q3[-1] # tiro o primeiro elemento que era NA
+q33 <- NA # crio um vetor vazio
+for (i in 1:nchar(q22)) { # faco um for de 1 ate o numero de caracteres do meu vetor em conjunto
+  q33 <- c(q33, substr(q22, i, i)) #  junto o q3 (que é NA no início)mais o q2 sendo que eu substituo o carcter 1 no primeiro lugar, depois o 2 no segundo e sucessivamente
+}
+q33 <- q33[-1] # tiro o primeiro elemento que era NA
+
+q4 <- grep('[^[:alnum:]]', q3, value = T) # pega os simbolos
+q44 <- grep('[^[:alnum:]]', q33, value = T) # pega os simbolos
+
+u1 <- unique(q4) # tiro os repetidos, pra ver quais simbolos tenho de um jeito + limpo
+u11 <- unique(q44) # tiro os repetidos, pra ver quais simbolos tenho de um jeito + limpo
+
+u2 <- u1[-3] # tirando o simbolo de ponto
+u22 <- u11[-3] # tirando o simbolo de ponto
+
+# tenho que tirar um de cada vez
+e <- gsub(u2[1],'T',es$lat);ee <- gsub(u22[1],'T',es$long)
+e <- gsub(u2[2],'T',e);ee <- gsub(u22[2],'T',ee)
+e <- gsub(u2[3],'T',e);ee <- gsub(u22[3],'T',ee)
+e <- gsub(u2[4],'T',e);ee <- gsub(u22[4],'T',ee)
+e <- gsub(u2[5],'T',e);ee <- gsub(u22[5],'T',ee)
+e <- gsub(u2[6],'T',e)
+e;ee
+# separando pelo simbolo que coloquei
+e <- strsplit(e,'T+')
+ee <- strsplit(ee,'T+')
+
+# antes pra ver se todas deram certo nomeia por 'LAT' ou 'LONG'
+es$LAT <- convert(e);es$LONG <- convert(ee) 
+is.numeric(es$LAT);is.numeric(es$LONG)
+es$LAT;es$LONG
+
+# mudar o sinal
+es$lat <- es$LAT*(-1);es$long <- es$LONG*(-1)
+es$lat;es$long
+
+###### plotar mapa e pontos pra ver se algum caiu fora do DF
+#install.packages('ggmap')
+library(ggmap)
+map_es <- 'Espírito Santo'
+es_map <- qmap(map_es,zoom=8)
+w <- es_map+geom_point(aes(x = long, y = lat , color = 'red'), 
+                       data = es)
+ggplot_build(w) # pra descobrir a linha removida: ponto es$lat[418] - parece erro de digitacao
+es$lat[418];es$long[418]
+e[418]
+dec=c(as.numeric(e[[418]][1]),as.numeric(e[[418]][2]),as.numeric(e[[418]][3]))
+abs(dec[1])+dec[2]/60+dec[3]/3600
+# o ponto cai no mar
+
 
 
 ###################### Para tranformar em excel depois ######################
