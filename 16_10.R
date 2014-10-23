@@ -694,6 +694,98 @@ go[67,c(9,10)]
 # o ponto cai em MG
 
 
+###################### MA ######################
+ma <- read.csv('MA.csv',header=T,sep=';')
+str(ma)
+names(ma)[c(11,12)] <- c('lat','long')
+str(ma)
+ma <- ma[which(ma$lat!=''),] # removendo linhas sem coordenadas - todas tem coordenadas
+ma$lat <- as.character(ma$lat); ma$long <- as.character(ma$long)
+str(ma)
+ma$lat <- sub(',','.',ma$lat);ma$long <- sub(',','.',ma$long)
+
+require(stringr)
+ma$lat  <- str_trim(ma$lat);ma$long  <- str_trim(ma$long) # retirando espacos em branco antes e depois
+
+####### Ver que simbolos tem 
+q1 <- ma$lat;q11 <- ma$long
+head(q1);head(q11)
+
+q2 <- q1[1] # o primeiro linha da coluna  q escolhi
+for (i in 2:length(q1)) { # do segundo da coluna (pq o primeiro ja pequei) ate o comprimento da coluna
+  q2 <- paste0(q2, q1[i]) # juntando todas as linhas
+}
+q22 <- q11[1] # o primeiro linha da coluna  q escolhi
+for (i in 2:length(q11)) { # do segundo da coluna (pq o primeiro ja pequei) ate o comprimento da coluna
+  q22 <- paste0(q22, q11[i]) # juntando todas as linhas
+}
+
+q3 <- NA # crio um vetor vazio
+for (i in 1:nchar(q2)) { # faco um for de 1 ate o numero de caracteres do meu vetor em conjunto
+  q3 <- c(q3, substr(q2, i, i)) #  junto o q3 (que é NA no início)mais o q2 sendo que eu substituo o carcter 1 no primeiro lugar, depois o 2 no segundo e sucessivamente
+}
+q3 <- q3[-1] # tiro o primeiro elemento que era NA
+q33 <- NA # crio um vetor vazio
+for (i in 1:nchar(q22)) { # faco um for de 1 ate o numero de caracteres do meu vetor em conjunto
+  q33 <- c(q33, substr(q22, i, i)) #  junto o q3 (que é NA no início)mais o q2 sendo que eu substituo o carcter 1 no primeiro lugar, depois o 2 no segundo e sucessivamente
+}
+q33 <- q33[-1] # tiro o primeiro elemento que era NA
+
+q4 <- grep('[^[:alnum:]]', q3, value = T) # pega os simbolos
+q44 <- grep('[^[:alnum:]]', q33, value = T) # pega os simbolos
+
+u1 <- unique(q4) # tiro os repetidos, pra ver quais simbolos tenho de um jeito + limpo
+u11 <- unique(q44) # tiro os repetidos, pra ver quais simbolos tenho de um jeito + limpo
+
+u2 <- u1[-2] # tirando o simbolo de ponto
+u22 <- u11[-2] # tirando o simbolo de ponto
+
+# tenho que tirar um de cada vez
+e <- gsub(u2[1],'T',ma$lat);ee <- gsub(u22[1],'T',ma$long)
+e <- gsub(u2[2],'T',e);ee <- gsub(u22[2],'T',ee)
+e <- gsub(u2[3],'T',e);ee <- gsub(u22[3],'T',ee)
+e <- gsub(u2[4],'T',e);ee <- gsub(u22[4],'T',ee)
+e <- gsub(u2[5],'T',e);ee <- gsub(u22[5],'T',ee)
+e <- gsub('º','T',e);ee <- gsub('º','T',ee)
+
+# separando pelo simbolo que coloquei
+e <- strsplit(e,'T+')
+ee <- strsplit(ee,'T+')
+
+# antes pra ver se todas deram certo nomeia por 'LAT' ou 'LONG'
+ma$LAT <- convert(e);ma$LONG <- convert(ee) 
+str(ma)
+is.numeric(am$LAT);is.numeric(am$LONG)
+# ver linhas que tem NA  
+ma[!complete.cases(ma$LAT),] # ma$LAT[6]
+ma[!complete.cases(ma$LONG),] # nenhuma
+
+############### arrumar ma$LAT[6]
+y <- e[[6]]
+y <- sub('O','',y)
+dec=c(as.numeric(y[1]),as.numeric(y[2]),as.numeric(y[3]))
+ma$LAT[6] <- abs(dec[1])+dec[2]/60+0/3600
+ma$LAT;ma$LONG
+
+# colocar os valores na coluna certa e trocando o sinal
+ma$lat <- ma$LAT*(-1);ma$long <- ma$LONG*(-1)
+ma$lat;ma$long
+
+###### plotar mapa e pontos pra ver se algum caiu fora do DF
+#install.packages('ggmap')
+library(ggmap)
+map_ma <- 'Maranhão'
+ma_map <- qmap(map_ma,zoom=6)
+ma_map+geom_point(aes(x = long, y = lat , color = 'red'), 
+                       data = ma)
+
+
+###################### MG ######################
+mg <- read.csv('MG.csv',header=T,sep=';')
+str(mg)
+names(mg)[8:9] <- c('lat','long')
+mg[which(),]
+
 
 ###################### Para tranformar em excel depois ######################
 library(xlsx)
