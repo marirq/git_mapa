@@ -105,8 +105,7 @@ ee <- strsplit(ee,'T+')
 
 # funcao pra converter em coordenada decimal
 convert<-function(coord){
-  ab <- coord
-  for (i in 1:length(coord)){
+    for (i in 1:length(coord)){
     dec=c(as.numeric(coord[[i]][1]),as.numeric(coord[[i]][2]),as.numeric(coord[[i]][3]))
     coord[i]<-abs(dec[1])+dec[2]/60+dec[3]/3600  
   }
@@ -625,8 +624,76 @@ abs(dec[1])+dec[2]/60+dec[3]/3600
 ###################### GO ######################
 go <- read.csv('GO.csv',header=TRUE,sep=';')
 str(go)
+names(go)[c(9,10)] <- c('lat','long')
+str(go)
+go <- go[complete.cases(go[,9:10]),] # outro jeito de tirar rows com NA
 
-function(x)
+
+go$LAT <- NA;go$LONG <- NA # criar coluna pra arrumar coordenadas
+str(go)
+q1 <- go$lat;q11 <- go$long
+str(q1);str(q11)
+
+a1 <- nchar(q1)
+unique(a1) # 4:7
+
+a2 <- which(nchar(q1)==4)
+for (i in 1:length(a2)){
+  go$LAT[a2[i]] <- go$lat[a2[i]]/100    
+}
+
+a2 <- which(nchar(q1)==5)
+for (i in 1:length(a2)){
+  go$LAT[a2[i]] <- go$lat[a2[i]]/1000    
+}
+
+a2 <- which(nchar(q1)==6)
+for (i in 1:length(a2)){
+  go$LAT[a2[i]] <- go$lat[a2[i]]/10000    
+}
+
+a2 <- which(nchar(q1)==7)
+for (i in 1:length(a2)){
+  go$LAT[a2[i]] <- go$lat[a2[i]]/100000
+}
+go$lat;go$LAT
+
+
+a11 <- nchar(q11)  
+unique(a11) # 5:7
+
+a2 <- which(nchar(q11)==5)
+for (i in 1:length(a2)){
+  go$LONG[a2[i]] <- go$long[a2[i]]/1000    
+}
+
+a2 <- which(nchar(q11)==6)
+for (i in 1:length(a2)){
+  go$LONG[a2[i]] <- go$long[a2[i]]/10000    
+}
+
+a2 <- which(nchar(q11)==7)
+for (i in 1:length(a2)){
+  go$LONG[a2[i]] <- go$long[a2[i]]/100000
+}
+go$long;go$LONG
+
+is.numeric(go$lat);is.numeric(go$LAT);is.numeric(go$long);is.numeric(go$LONG)
+go$lat <- go$LAT*(-1);go$long <- go$LONG*(-1)
+go$lat;go$long
+
+###### plotar mapa e pontos pra ver se algum caiu fora do DF
+#install.packages('ggmap')
+library(ggmap)
+map_go <- 'Goiás'
+go_map <- qmap(map_go,zoom=7)
+w <- go_map+geom_point(aes(x = long, y = lat , color = 'red'), 
+                       data = go)
+ggplot_build(w) # pra descobrir a linha removida: ponto go$long[67]
+go[67,c(9,10)]
+# o ponto cai em MG
+
+
 
 ###################### Para tranformar em excel depois ######################
 library(xlsx)
@@ -641,3 +708,5 @@ w$data[[4]]
 ################################ Sistemas de Coords ################################################
 # O sistema de coordenada (DATUM)  em Grau, do Google Earth e da maioria dos mapas na internet é a WGS84
 
+################################ Geotrans ################################################
+# executavel no windowns pra transformar coordenadas
