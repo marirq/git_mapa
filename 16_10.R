@@ -779,12 +779,45 @@ ma_map <- qmap(map_ma,zoom=6)
 ma_map+geom_point(aes(x = long, y = lat , color = 'red'), 
                        data = ma)
 
+ggplot_build(w)
+ww$data[[4]][1:30,c(2,3)]
 
 ###################### MG ######################
 mg <- read.csv('MG.csv',header=T,sep=';')
 str(mg)
 names(mg)[8:9] <- c('lat','long')
-mg[which(),]
+mg[which(mg$lat==''),] # todas as linhas tem coordenadas
+
+mg$lat <- as.character(mg$lat);mg$long <- as.character(mg$long)
+mg$lat <- sub(',','.',mg$lat);mg$long <- sub(',','.',mg$long)
+str(mg$lat);str(mg$long)
+
+# transformar para numero
+mg$lat <- as.numeric(mg$lat);mg$long <- as.numeric(mg$long)
+str(mg[8:9])
+
+###### plotar mapa e pontos pra ver se algum caiu fora do DF
+#install.packages('ggmap')
+library(ggmap)
+map_mg <- 'Minas Gerais'
+mg_map <- qmap(map_mg,zoom=6)
+w <- mg_map+geom_point(aes(x = long, y = lat , color = 'red'), 
+                  data = mg)
+
+ww <- ggplot_build(w) # pra descobrir as 23 linhas removidas:
+ww$data[[4]][!complete.cases(ww$data[[4]][,c(2,3)]),c(2,3)] # 22 pontos fora do mapa
+mg[c(171,202,805,861,873,1237,1338,1409,1597,1617),8:9]
+# mg[c(171,202,805,861,873,1237,1409,1597,1617)] ponto no mar
+# mg[1338] erro de digitacao total hahahahaha
+mg[c(549,857,879,1244,1313,1354,1380),8:9]
+# mg$lat[549] ponto na Bahia
+# mg$lat[857,879,1244,1313,1354,1380] ponto no mar
+mg[c(531,1309,1358,1364,2075),8:9] #long
+# mg$long[c(531,1364,2075)] ponto no mar
+# mg$long[c(1309,1358)] lat e long iguais
+
+
+
 
 
 ###################### Para tranformar em excel depois ######################
