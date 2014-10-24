@@ -1,7 +1,7 @@
 ################### AC ###################
 ac <- read.csv('AC.csv', header=TRUE, sep=';')
 head(ac)
-str(ac)
+str(ac) # 8282 com coord
 names(ac)
 names(ac)[c(11,12)] <- c('lat','long')
 names(ac)
@@ -44,7 +44,7 @@ ac_map+geom_point(aes(x = long, y = lat, color = cor ),
 
 ###################### AM ######################
 am <- read.csv('AM.csv',header=TRUE,sep=';')
-str(am)
+str(am) # 8282 com coord
 names(am)[c(11,12)] <- c('lat','long')
 am <- am[which(am$lat!=''),] # removendo linhas sem coordenadas
 am$lat <- as.character(am$lat); am$long <- as.character(am$long)
@@ -170,7 +170,7 @@ am_map+geom_point(aes(x = long_dec, y = lat_dec , color = cor),
 
 ###################### BA ######################
 ba <- read.csv('BA.csv',header=TRUE,sep=';')
-str(ba)
+str(ba) # 422 com coord
 names(ba)[c(8,9)] <- c('lat','long')
 names(ba)
 
@@ -373,7 +373,7 @@ ba_map+geom_point(aes(x = long, y = lat , color = cor),
 
 ###################### CE ######################
 ce <- read.csv('CE2.csv',header=TRUE,sep=';')
-str(ce)
+str(ce) # 66 com coord
 levels(ce$LATITUDE_S..DECIMAL.)
 names(ce)[c(13,16)] <- c('lat','long')
 names(ce)
@@ -487,7 +487,7 @@ ce$lat[15] <- ce$lat[15]/100000 #faltava um ponto, resolvendo a divisao deu cert
 
 ###################### DF ######################
 df <- read.csv('DF.csv',header=TRUE,sep=';')
-str(df)
+str(df) # 208 com coord
 df$UF_ESTABEL <- as.character(df$UF_ESTABEL)
 df[which(df$UF_ESTABEL=='DISTRITO FEDERAL'),'UF_ESTABEL']='DF'
 
@@ -543,7 +543,7 @@ df$lat[108];df$long[108]
 
 ###################### ES ######################
 es <- read.csv('ES.csv',header=T,sep=';')
-str(es)
+str(es) # 456 com coord
 names(es)[c(8,9)] <- c('lat','long')
 names(es)
 es$lat <- as.character(es$lat);es$long <- as.character(es$long)
@@ -623,7 +623,7 @@ abs(dec[1])+dec[2]/60+dec[3]/3600
 
 ###################### GO ######################
 go <- read.csv('GO.csv',header=TRUE,sep=';')
-str(go)
+str(go) # 739 com coord
 names(go)[c(9,10)] <- c('lat','long')
 str(go)
 go <- go[complete.cases(go[,9:10]),] # outro jeito de tirar rows com NA
@@ -696,7 +696,7 @@ go[67,c(9,10)]
 
 ###################### MA ######################
 ma <- read.csv('MA.csv',header=T,sep=';')
-str(ma)
+str(ma) # 70 com coord
 names(ma)[c(11,12)] <- c('lat','long')
 str(ma)
 ma <- ma[which(ma$lat!=''),] # removendo linhas sem coordenadas - todas tem coordenadas
@@ -784,7 +784,7 @@ ww$data[[4]][1:30,c(2,3)]
 
 ###################### MG ######################
 mg <- read.csv('MG.csv',header=T,sep=';')
-str(mg)
+str(mg) # 2477 com coord
 names(mg)[8:9] <- c('lat','long')
 mg[which(mg$lat==''),] # todas as linhas tem coordenadas
 
@@ -815,6 +815,7 @@ mg[c(549,857,879,1244,1313,1354,1380),8:9]
 mg[c(531,1309,1358,1364,2075),8:9] #long
 # mg$long[c(531,1364,2075)] ponto no mar
 # mg$long[c(1309,1358)] lat e long iguais
+
 
 
 
