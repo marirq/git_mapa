@@ -1,5 +1,5 @@
 ################### AC ###################
-ac <- read.csv('AC.csv', header=TRUE, sep=';')
+ac <- read.csv('AC.csv', header=TRUE, sep=';') # 8282 propriedades
 head(ac)
 str(ac) # 8282 com coord
 names(ac)
@@ -43,8 +43,8 @@ ac_map+geom_point(aes(x = long, y = lat, color = cor ),
 
 
 ###################### AM ######################
-am <- read.csv('AM.csv',header=TRUE,sep=';')
-str(am) # 8282 com coord
+am <- read.csv('AM.csv',header=TRUE,sep=';') # 64 propriedades
+str(am) # 57 com coord
 names(am)[c(11,12)] <- c('lat','long')
 am <- am[which(am$lat!=''),] # removendo linhas sem coordenadas
 am$lat <- as.character(am$lat); am$long <- as.character(am$long)
@@ -169,7 +169,7 @@ am_map+geom_point(aes(x = long_dec, y = lat_dec , color = cor),
 
 
 ###################### BA ######################
-ba <- read.csv('BA.csv',header=TRUE,sep=';')
+ba <- read.csv('BA.csv',header=TRUE,sep=';') # 509 propriedades
 str(ba) # 422 com coord
 names(ba)[c(8,9)] <- c('lat','long')
 names(ba)
@@ -372,7 +372,7 @@ ba_map+geom_point(aes(x = long, y = lat , color = cor),
 
 
 ###################### CE ######################
-ce <- read.csv('CE2.csv',header=TRUE,sep=';')
+ce <- read.csv('CE2.csv',header=TRUE,sep=';') # 79 propriedades
 str(ce) # 66 com coord
 levels(ce$LATITUDE_S..DECIMAL.)
 names(ce)[c(13,16)] <- c('lat','long')
@@ -486,7 +486,7 @@ ce$lat[15] <- ce$lat[15]/100000 #faltava um ponto, resolvendo a divisao deu cert
 
 
 ###################### DF ######################
-df <- read.csv('DF.csv',header=TRUE,sep=';')
+df <- read.csv('DF.csv',header=TRUE,sep=';') # 208 propriedades
 str(df) # 208 com coord
 df$UF_ESTABEL <- as.character(df$UF_ESTABEL)
 df[which(df$UF_ESTABEL=='DISTRITO FEDERAL'),'UF_ESTABEL']='DF'
@@ -542,7 +542,7 @@ df$lat[108];df$long[108]
 # tem mto ponto no entorno do DF
 
 ###################### ES ######################
-es <- read.csv('ES.csv',header=T,sep=';')
+es <- read.csv('ES.csv',header=T,sep=';') # 456 propriedades
 str(es) # 456 com coord
 names(es)[c(8,9)] <- c('lat','long')
 names(es)
@@ -622,7 +622,7 @@ abs(dec[1])+dec[2]/60+dec[3]/3600
 # o ponto cai no mar
 
 ###################### GO ######################
-go <- read.csv('GO.csv',header=TRUE,sep=';')
+go <- read.csv('GO.csv',header=TRUE,sep=';') # 873 propriedades
 str(go) # 739 com coord
 names(go)[c(9,10)] <- c('lat','long')
 str(go)
@@ -695,7 +695,7 @@ go[67,c(9,10)]
 
 
 ###################### MA ######################
-ma <- read.csv('MA.csv',header=T,sep=';')
+ma <- read.csv('MA.csv',header=T,sep=';') # 70 propriedades
 str(ma) # 70 com coord
 names(ma)[c(11,12)] <- c('lat','long')
 str(ma)
@@ -783,7 +783,7 @@ ggplot_build(w)
 ww$data[[4]][1:30,c(2,3)]
 
 ###################### MG ######################
-mg <- read.csv('MG.csv',header=T,sep=';')
+mg <- read.csv('MG.csv',header=T,sep=';') # 2477 propriedades
 str(mg) # 2477 com coord
 names(mg)[8:9] <- c('lat','long')
 mg[which(mg$lat==''),] # todas as linhas tem coordenadas
@@ -817,9 +817,170 @@ mg[c(531,1309,1358,1364,2075),8:9] #long
 # mg$long[c(1309,1358)] lat e long iguais
 
 
+# Contagem de propriedades: AC - MG
+prop <- c(8282,64,509,79,208,456,873,70,2477)
+sum(prop) # 13018
 
 
+prop.coord <- c(8282,57,422,66,208,456,739,70,2477)
+sum(prop.coord) # 12720
 
+###################### MS ######################
+ms <- read.csv('MS.csv',header=T,sep=';') # 658 propriedades
+str(ms)
+names(ms)[c(11,12)] <- c('lat','long')
+str(ms)
+
+ms <- ms[which(ms$lat!=''),] # removendo linhas sem coordenadas
+ms <- ms[which(ms$lat!=0),] # 604 com coord
+
+ms$lat <- as.character(ms$lat); ms$long <- as.character(ms$long)
+
+str(ms)
+ms$lat <- sub(',','.',ms$lat);ms$long <- sub(',','.',ms$long)
+
+ms$lat  <- str_trim(ms$lat);ms$long  <- str_trim(ms$long) # retirando espacos em branco antes e depois
+str(ms)
+
+####### Ver que simbolos tem 
+q1 <- ms$lat;q11 <- ms$long
+head(q1);head(q11)
+
+q2 <- q1[1] # o primeiro linha da coluna  q escolhi
+for (i in 2:length(q1)) { # do segundo da coluna (pq o primeiro ja pequei) ate o comprimento da coluna
+  q2 <- paste0(q2, q1[i]) # juntando todas as linhas
+}
+q22 <- q11[1] # o primeiro linha da coluna  q escolhi
+for (i in 2:length(q11)) { # do segundo da coluna (pq o primeiro ja pequei) ate o comprimento da coluna
+  q22 <- paste0(q22, q11[i]) # juntando todas as linhas
+}
+
+q3 <- NA # crio um vetor vazio
+for (i in 1:nchar(q2)) { # faco um for de 1 ate o numero de caracteres do meu vetor em conjunto
+  q3 <- c(q3, substr(q2, i, i)) #  junto o q3 (que é NA no início)mais o q2 sendo que eu substituo o carcter 1 no primeiro lugar, depois o 2 no segundo e sucessivamente
+}
+q3 <- q3[-1] # tiro o primeiro elemento que era NA
+q33 <- NA # crio um vetor vazio
+for (i in 1:nchar(q22)) { # faco um for de 1 ate o numero de caracteres do meu vetor em conjunto
+  q33 <- c(q33, substr(q22, i, i)) #  junto o q3 (que é NA no início)mais o q2 sendo que eu substituo o carcter 1 no primeiro lugar, depois o 2 no segundo e sucessivamente
+}
+q33 <- q33[-1] # tiro o primeiro elemento que era NA
+
+q4 <- grep('[^[:alnum:]]', q3, value = T) # pega os simbolos
+q44 <- grep('[^[:alnum:]]', q33, value = T) # pega os simbolos
+
+u1 <- unique(q4) # tiro os repetidos, pra ver quais simbolos tenho de um jeito + limpo
+u11 <- unique(q44) # tiro os repetidos, pra ver quais simbolos tenho de um jeito + limpo
+
+u2 <- u1[-2] # tirando o simbolo de ponto
+u22 <- u11[-2] # tirando o simbolo de ponto
+
+# tenho que tirar um de cada vez
+e <- gsub(u2[1],'T',ms$lat);ee <- gsub(u22[1],'T',ms$long)
+e <- gsub(u2[2],'T',e);ee <- gsub(u22[2],'T',ee)
+e <- gsub(u2[3],'T',e);ee <- gsub(u22[3],'T',ee)
+e <- gsub(u2[4],'T',e);ee <- gsub(u22[4],'T',ee)
+e <- gsub(u2[5],'T',e);ee <- gsub(u22[5],'T',ee)
+ee <- gsub(u22[6],'T',ee)
+
+# separando pelo simbolo que coloquei
+e <- strsplit(e,'T+')
+ee <- strsplit(ee,'T+')
+
+# antes pra ver se todas deram certo nomeia por 'LAT' ou 'LONG'
+ms$LAT <- convert(e);ms$LONG <- convert(ee) 
+is.numeric(ms$LAT);is.numeric(ms$LONG)
+ms$LAT;ms$LONG
+
+# ver linhas que tem NA  
+ms[!complete.cases(ms$LAT),] # ms$LAT[c(169,363:487,593:597,599)]
+ms[!complete.cases(ms$LONG),] # ms$LONG[c(169,363:487,584,593,594,596,597,599)] 
+
+# arrumando lat
+q1 <- ms$lat[c(169,363:487,593:597,599)] # ms$lat[169] ta errada
+head(q1)
+
+q2 <- q1[1] # o primeiro linha da coluna  q escolhi
+for (i in 2:length(q1)) { # do segundo da coluna (pq o primeiro ja pequei) ate o comprimento da coluna
+  q2 <- paste0(q2, q1[i]) # juntando todas as linhas
+}
+
+q3 <- NA # crio um vetor vazio
+for (i in 1:nchar(q2)) { # faco um for de 1 ate o numero de caracteres do meu vetor em conjunto
+  q3 <- c(q3, substr(q2, i, i)) #  junto o q3 (que é NA no início)mais o q2 sendo que eu substituo o carcter 1 no primeiro lugar, depois o 2 no segundo e sucessivamente
+}
+q3 <- q3[-1] # tiro o primeiro elemento que era NA
+q4 <- grep('[^[:alnum:]]', q3, value = T) # pega os simbolos
+u1 <- unique(q4) # tiro os repetidos, pra ver quais simbolos tenho de um jeito + limpo
+u2 <- u1[-1] # tirando o simbolo de ponto
+
+e <- gsub(u2[1],'T',ms$lat[c(169,363:487,593:597,599)])
+e <- gsub(u2[2],'T',e)
+e <- gsub(u2[3],'T',e)
+e <- gsub(u2[4],'T',e)
+e <- gsub('º','T',e)
+e <- strsplit(e,'T+')
+
+ms$LAT[c(169,363:487,593:597,599)] <- convert(e) 
+ms$LAT # ms$LAT[c(169,584)] ainda NA, mas 169 esta errado
+
+ms$lat[584] # arrumar
+e <- gsub(u2[1],'T',ms$lat[584])
+e <- gsub(u2[2],'T',e)
+e <- gsub(u2[3],'T',e)
+e <- gsub(u2[4],'T',e)
+e <- gsub('º','T',e)
+e <- strsplit(e,'T+')
+ms$LAT[584] <- convert(e)
+ms$LAT
+
+# ms$LONG[c(169,363:487,584,593,594,596,597,599)] 
+# arrumando long
+q1 <- ms$long[c(169,363:487,584,593,594,596,597,599)]
+head(q1)
+
+q2 <- q1[1] # o primeiro linha da coluna  q escolhi
+for (i in 2:length(q1)) { # do segundo da coluna (pq o primeiro ja pequei) ate o comprimento da coluna
+  q2 <- paste0(q2, q1[i]) # juntando todas as linhas
+}
+
+q3 <- NA # crio um vetor vazio
+for (i in 1:nchar(q2)) { # faco um for de 1 ate o numero de caracteres do meu vetor em conjunto
+  q3 <- c(q3, substr(q2, i, i)) #  junto o q3 (que é NA no início)mais o q2 sendo que eu substituo o carcter 1 no primeiro lugar, depois o 2 no segundo e sucessivamente
+}
+q3 <- q3[-1] # tiro o primeiro elemento que era NA
+q4 <- grep('[^[:alnum:]]', q3, value = T) # pega os simbolos
+u1 <- unique(q4) # tiro os repetidos, pra ver quais simbolos tenho de um jeito + limpo
+u2 <- u1[-1] # tirando o simbolo de ponto
+
+e <- gsub(u2[1],'T',ms$long[c(169,363:487,584,593,594,596,597,599)])
+e <- gsub(u2[2],'T',e)
+e <- gsub(u2[3],'T',e)
+e <- gsub(u2[4],'T',e)
+e <- gsub('º','T',e)
+e <- strsplit(e,'T+')
+
+ms$LONG[c(169,363:487,584,593,594,596,597,599)] <- convert(e) 
+ms$LONG # ms$LONG[c(169,583,437,453)] ainda NA, mas 169 esta errado
+
+ms$long[c(169,583,437,453)] # arrumar, menos 169
+e <- gsub(u2[1],'T',ms$long[c(169,583,437,453)])
+e <- gsub(u2[2],'T',e)
+e <- gsub(u2[3],'T',e)
+e <- gsub(u2[4],'T',e)
+e <- gsub('º','T',e)
+e <- strsplit(e,'T+')
+ms$LONG[c(169,583,437,453)] <- convert(e)
+ms$LONG
+e
+# arrumando 583
+e <- ms$long[583]
+e <- gsub(u2[2],'T',e)
+e <- gsub('°','T',e)
+e <- strsplit(e,'T+')
+dec=c(as.numeric(e[[1]][1]),as.numeric(e[[1]][2]),as.numeric(e[[1]][3]))
+coord <-abs(dec[1])+dec[2]/60+dec[3]/3600 
+ms$LONG[583] <- coord # PUTA QUE PARIUUUUU TENHO QUE AAAARRRRRRHHHHHHH
 
 ###################### Para tranformar em excel depois ######################
 library(xlsx)
