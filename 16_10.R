@@ -1,11 +1,9 @@
 ################### AC ###################
-ac <- read.csv('AC.csv', header=TRUE, sep=';') # 8282 propriedades
-head(ac)
+ac0 <- read.csv('AC.csv', header=TRUE, sep=';') # 8282 propriedades
+head(ac0)
+names(ac0)[c(11,12)] <- c('lat','long')
+ac <- ac0[which(ac0$lat!=''),] # todas as linhas tem coordenadas
 str(ac) # 8282 com coord
-names(ac)
-names(ac)[c(11,12)] <- c('lat','long')
-names(ac)
-ac <- ac[which(ac$lat!=''),] # todas as linhas tem coordenadas
 
 ac$lat <- as.character(ac$lat); ac$long <- as.character(ac$long)
 str(ac)
@@ -43,10 +41,12 @@ ac_map+geom_point(aes(x = long, y = lat, color = cor ),
 
 
 ###################### AM ######################
-am <- read.csv('AM.csv',header=TRUE,sep=';') # 64 propriedades
+am0 <- read.csv('AM.csv',header=TRUE,sep=';') # 64 propriedades
+names(am0)[c(11,12)] <- c('lat','long')
+
+am <- am0[which(am0$lat!=''),] # removendo linhas sem coordenadas
 str(am) # 57 com coord
-names(am)[c(11,12)] <- c('lat','long')
-am <- am[which(am$lat!=''),] # removendo linhas sem coordenadas
+
 am$lat <- as.character(am$lat); am$long <- as.character(am$long)
 str(am)
 am$lat <- sub(',','.',am$lat);am$long <- sub(',','.',am$long)
@@ -128,6 +128,7 @@ y <- strsplit(y,'T+')
 
 dec=c(as.numeric(y[[1]][1]),as.numeric(y[[1]][2]))#,as.numeric(e[[1]][3]))
 am$LAT[22] <- abs(dec[1])+dec[2]/60+0/3600
+am$LAT;am$LONG
 
 # colocar os valores na coluna certa
 am$lat <- am$LAT;am$long <- am$LONG
@@ -169,17 +170,15 @@ am_map+geom_point(aes(x = long_dec, y = lat_dec , color = cor),
 
 
 ###################### BA ######################
-ba <- read.csv('BA.csv',header=TRUE,sep=';') # 509 propriedades
-str(ba) # 422 com coord
-names(ba)[c(8,9)] <- c('lat','long')
-names(ba)
+ba0 <- read.csv('BA.csv',header=TRUE,sep=';') # 509 propriedades
+names(ba0)[c(8,9)] <- c('lat','long')
 
 # removendo linhas sem coordenada
-str(ba)
-levels(ba$lat)
-ba <- ba[which(ba$lat!="Não informado"),]
+str(ba0)
+levels(ba0$lat)
+ba <- ba0[which(ba0$lat!="Não informado"),]
 ba <- ba[which(ba$lat!=""),]
-
+str(ba) # 422 com coord
 ba$lat <- as.character(ba$lat); ba$long <- as.character(ba$long)
 str(ba)
 ba$lat <- sub(',','.',ba$lat);ba$long <- sub(',','.',ba$long)
@@ -243,8 +242,7 @@ is.numeric(ba$LAT);is.numeric(ba$LONG)
 ba$LAT;ba$LONG
 str(ba)
 
-ba[which(ba$LAT == NaN),]
-class(ba$LAT[78])
+
 # precisa arrumar os NAs em ba$LAT[78,90,92,151,291,348,360] e ba$LONG[90,282] refazer a partir do 'e' ou 'ee' 
 y <- gsub(u2[1],'T',ba$lat[78])
 y <- gsub(u2[2],'T',y)
@@ -372,16 +370,15 @@ ba_map+geom_point(aes(x = long, y = lat , color = cor),
 
 
 ###################### CE ######################
-ce <- read.csv('CE2.csv',header=TRUE,sep=';') # 79 propriedades
-str(ce) # 66 com coord
-levels(ce$LATITUDE_S..DECIMAL.)
-names(ce)[c(13,16)] <- c('lat','long')
-names(ce)
+ce0 <- read.csv('CE2.csv',header=TRUE,sep=';') # 79 propriedades
+
+names(ce0)[c(13,16)] <- c('lat','long')
 
 # removendo linhas sem coordenada
+ce <- ce0[which(ce0$lat != ""),]
 str(ce)
 levels(ce$lat)
-ce <- ce[which(ce$lat != ""),]
+
 
 ce$lat <- as.character(ce$lat); ce$long <- as.character(ce$long)
 str(ce)
