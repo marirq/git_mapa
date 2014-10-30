@@ -484,19 +484,19 @@ ce$lat[15] <- ce$lat[15]/100000 #faltava um ponto, resolvendo a divisao deu cert
 
 ###################### DF ######################
 df <- read.csv('DF.csv',header=TRUE,sep=';') # 208 propriedades
-str(df) # 208 com coord
+
 df$UF_ESTABEL <- as.character(df$UF_ESTABEL)
 df[which(df$UF_ESTABEL=='DISTRITO FEDERAL'),'UF_ESTABEL']='DF'
 
 names(df)[c(11,12)] <- c('lat','long')
 names(df)
-
+df$lat[1:10]
 df$lat <- as.character(df$lat);df$long <- as.character(df$long)
 str(df)
 df$lat  <- str_trim(df$lat);df$long  <- str_trim(df$long) # retirando espacos em branco antes e depois
 df$lat <- sub(',','.',df$lat);df$long <- sub(',','.',df$long)
 str(df)
-
+q1;q11
 q1 <- df$lat;q11 <- df$long # verificando as coordenadas
 a1 <- grep('[^[:alnum:]]',q1) # vejo as linhas que tem numero e ponto
 a11 <- grep('[^[:alnum:]]',q11) # vejo as linhas que tem numero e ponto
@@ -539,17 +539,19 @@ df$lat[108];df$long[108]
 # tem mto ponto no entorno do DF
 
 ###################### ES ######################
-es <- read.csv('ES.csv',header=T,sep=';') # 456 propriedades
-str(es) # 456 com coord
+es0 <- read.csv('ES.csv',header=T,sep=';') # 456 propriedades
+es <- es0[which(es0$LATITUDE_S..DECIMAL.!=""),]
+
 names(es)[c(8,9)] <- c('lat','long')
-names(es)
+str(es) # 456 com coord
+
 es$lat <- as.character(es$lat);es$long <- as.character(es$long)
 str(es)
 es$lat <- sub(',','.',es$lat);es$long <- sub(',','.',es$long)
 str(es)
 require(stringr)
 es$lat  <- str_trim(es$lat);es$long  <- str_trim(es$long) # retirando espacos em branco antes e depois
-
+es$lat;es$long
 ####### Ver que simbolos tem 
 q1 <- es$lat;q11 <- es$long
 head(q1);head(q11)
@@ -619,12 +621,12 @@ abs(dec[1])+dec[2]/60+dec[3]/3600
 # o ponto cai no mar
 
 ###################### GO ######################
-go <- read.csv('GO.csv',header=TRUE,sep=';') # 873 propriedades
-str(go) # 739 com coord
-names(go)[c(9,10)] <- c('lat','long')
-str(go)
-go <- go[complete.cases(go[,9:10]),] # outro jeito de tirar rows com NA
+go0 <- read.csv('GO.csv',header=TRUE,sep=';') # 873 propriedades
+str(go0)
+names(go0)[c(9,10)] <- c('lat','long')
 
+go <- go0[complete.cases(go0[,9:10]),] # outro jeito de tirar rows com NA
+str(go) # 739 com coord
 
 go$LAT <- NA;go$LONG <- NA # criar coluna pra arrumar coordenadas
 str(go)
@@ -692,11 +694,11 @@ go[67,c(9,10)]
 
 
 ###################### MA ######################
-ma <- read.csv('MA.csv',header=T,sep=';') # 70 propriedades
-str(ma) # 70 com coord
+ma0 <- read.csv('MA.csv',header=T,sep=';') # 70 propriedades
+ma <- ma0[which(ma0$LATITUDE_S..DECIMAL.!=''),] # removendo linhas sem coordenadas - todas tem coordenadas
 names(ma)[c(11,12)] <- c('lat','long')
-str(ma)
-ma <- ma[which(ma$lat!=''),] # removendo linhas sem coordenadas - todas tem coordenadas
+str(ma) # 70 com coord
+
 ma$lat <- as.character(ma$lat); ma$long <- as.character(ma$long)
 str(ma)
 ma$lat <- sub(',','.',ma$lat);ma$long <- sub(',','.',ma$long)
@@ -780,18 +782,19 @@ ggplot_build(w)
 ww$data[[4]][1:30,c(2,3)]
 
 ###################### MG ######################
-mg <- read.csv('MG.csv',header=T,sep=';') # 2477 propriedades
-str(mg) # 2477 com coord
-names(mg)[8:9] <- c('lat','long')
-mg[which(mg$lat==''),] # todas as linhas tem coordenadas
+mg0 <- read.csv('MG.csv',header=T,sep=';') # 2477 propriedades
+mg <- mg0[which(mg0$LATITUDE_S..DECIMAL.!=''),] # todas as linhas tem coordenadas
 
+names(mg)[8:9] <- c('lat','long')
+str(mg) # 2477 com coord
 mg$lat <- as.character(mg$lat);mg$long <- as.character(mg$long)
 mg$lat <- sub(',','.',mg$lat);mg$long <- sub(',','.',mg$long)
 str(mg$lat);str(mg$long)
 
 # transformar para numero
 mg$lat <- as.numeric(mg$lat);mg$long <- as.numeric(mg$long)
-str(mg[8:9])
+str(mg[,8:9])
+mg$lat;mg$long
 
 ###### plotar mapa e pontos pra ver se algum caiu fora do DF
 #install.packages('ggmap')
@@ -823,16 +826,15 @@ prop.coord <- c(8282,57,422,66,208,456,739,70,2477)
 sum(prop.coord) # 12720
 
 ###################### MS ######################
-ms <- read.csv('MS.csv',header=T,sep=';') # 658 propriedades
+ms0 <- read.csv('MS.csv',header=T,sep=';') # 658 propriedades
+
+ms <- ms0[which(ms0$LATITUDE_S..DECIMAL.!=''),] # removendo linhas sem coordenadas
+ms <- ms[which(ms$LATITUDE_S..DECIMAL.!=0),] # 604 com coord
 str(ms)
 names(ms)[c(11,12)] <- c('lat','long')
 str(ms)
 
-ms <- ms[which(ms$lat!=''),] # removendo linhas sem coordenadas
-ms <- ms[which(ms$lat!=0),] # 604 com coord
-
 ms$lat <- as.character(ms$lat); ms$long <- as.character(ms$long)
-
 str(ms)
 ms$lat <- sub(',','.',ms$lat);ms$long <- sub(',','.',ms$long)
 
@@ -958,7 +960,7 @@ e <- gsub('º','T',e)
 e <- strsplit(e,'T+')
 
 ms$LONG[c(169,363:487,584,593,594,596,597,599)] <- convert(e) 
-ms$LONG # ms$LONG[c(169,583,437,453)] ainda NA, mas 169 esta errado
+ms$LONG # ms$LONG[c(169,583,437,453,483)] ainda NA, mas 169 esta errado
 
 ms$long[c(169,583,437,453)] # arrumar, menos 169
 e <- gsub(u2[1],'T',ms$long[c(169,583,437,453)])
@@ -977,7 +979,62 @@ e <- gsub('°','T',e)
 e <- strsplit(e,'T+')
 dec=c(as.numeric(e[[1]][1]),as.numeric(e[[1]][2]),as.numeric(e[[1]][3]))
 coord <-abs(dec[1])+dec[2]/60+dec[3]/3600 
-ms$LONG[583] <- coord # PUTA QUE PARIUUUUU TENHO QUE AAAARRRRRRHHHHHHH
+ms$LONG[583] <- coord 
+
+# arrumando 437
+e <- ms$long[437]
+e <- gsub('´','T',e)
+e <- gsub('º','T',e)
+e <- strsplit(e,'T+')
+dec=c(as.numeric(e[[1]][2]),as.numeric(e[[1]][3]),as.numeric(e[[1]][4]))
+coord <-abs(dec[1])+dec[2]/60+dec[3]/3600 
+ms$LONG[437] <- coord 
+
+# arrumando 453
+e <- ms$long[453]
+e <- gsub('´','T',e)
+e <- gsub('º','T',e)
+e <- strsplit(e,'T+')
+dec=c(as.numeric(e[[1]][2]),as.numeric(e[[1]][3]),as.numeric(e[[1]][4]))
+coord <-abs(dec[1])+dec[2]/60+dec[3]/3600 
+ms$LONG[453] <- coord 
+
+# arrumando 483
+e <- ms$long[483]
+e <- gsub('´','T',e)
+e <- gsub('º','T',e)
+e <- strsplit(e,'T+')
+o <- strsplit(e[[1]][2],1)
+o[[1]][1] <- 1
+n <- c(e[[1]][1],o) 
+dec=c(as.numeric(n[[1]][1]),as.numeric(n[[2]][1]),as.numeric(n[[2]][2]))
+coord <-abs(dec[1])+dec[2]/60+dec[3]/3600 
+ms$LONG[483] <- coord 
+ms$LAT;ms$LONG
+
+# trocando o sinal e colocando na coluna certa
+ms$lat <- ms$LAT*(-1);ms$long <- ms$LONG*(-1)
+ms$lat;ms$long
+
+###### plotar mapa e pontos pra ver se algum caiu fora do DF
+#install.packages('ggmap')
+library(ggmap)
+map_ms <- 'Mato Grosso do Sul'
+ms_map <- qmap(map_ms,zoom=7)
+w <- ms_map+geom_point(aes(x = long, y = lat , color = 'red'), 
+                       data = ms)
+
+ww <- ggplot_build(w) # ms$LONG[214,452,482,532:535,537:541,604] [c(169)]
+ms[c(169,214,452,482,532:535,537:541,604),c('UF_ESTABEL','lat','long')]
+# [214] Minas
+# [453] - 
+ms0$LATITUDE_S..DECIMAL.[453]
+ms$LAT[453]
+ms[450:455,]
+head(ms0)
+
+
+#REFAZERRRRR
 
 ###################### Para tranformar em excel depois ######################
 library(xlsx)
