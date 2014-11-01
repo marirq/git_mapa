@@ -1017,24 +1017,23 @@ ms$lat <- ms$LAT*(-1);ms$long <- ms$LONG*(-1)
 ms$lat;ms$long
 
 ###### plotar mapa e pontos pra ver se algum caiu fora do DF
-#install.packages('ggmap')
+install.packages('ggmap')
 library(ggmap)
 map_ms <- 'Mato Grosso do Sul'
 ms_map <- qmap(map_ms,zoom=7)
 w <- ms_map+geom_point(aes(x = long, y = lat , color = 'red'), 
                        data = ms)
 
-ww <- ggplot_build(w) # ms$LONG[214,452,482,532:535,537:541,604] [c(169)]
-ms[c(169,214,452,482,532:535,537:541,604),c('UF_ESTABEL','lat','long')]
-# [214] Minas
-# [453] - 
-ms0$LATITUDE_S..DECIMAL.[453]
-ms$LAT[453]
-ms[450:455,]
-head(ms0)
+ww <- ggplot_build(w) # ms$LONG[214,452,482,532:535,537:541,604] [c(169)] 
+ms[c(169,214,452,482,532:535,537:541,604),c('lat','long')]
+# [214] Minas, [452] Paraguai, [482] Sao Paulo, [604] Goias - eliminar rows
+# [532:535] MS, MS, MS, MS, [537:541] MS, MS, MS, MS, MS - preservar rows
 
 
-#REFAZERRRRR
+
+
+
+
 
 ###################### Para tranformar em excel depois ######################
 library(xlsx)
