@@ -483,20 +483,23 @@ ce$lat[15] <- ce$lat[15]/100000 #faltava um ponto, resolvendo a divisao deu cert
 
 
 ###################### DF ######################
-df <- read.csv('DF.csv',header=TRUE,sep=';') # 208 propriedades
+df0 <- read.csv('DF.csv',header=TRUE,sep=';') # 208 propriedades
+str(df0)
 
-df$UF_ESTABEL <- as.character(df$UF_ESTABEL)
-df[which(df$UF_ESTABEL=='DISTRITO FEDERAL'),'UF_ESTABEL']='DF'
+df0$UF_ESTABEL <- as.character(df0$UF_ESTABEL)
+df0[which(df0$UF_ESTABEL=='DISTRITO FEDERAL'),'UF_ESTABEL']='DF'
 
-names(df)[c(11,12)] <- c('lat','long')
-names(df)
-df$lat[1:10]
+names(df0)[c(11,12)] <- c('lat','long')
+names(df0)
+df0$lat[1:10]
+df <- df0
+str(df)
 df$lat <- as.character(df$lat);df$long <- as.character(df$long)
 str(df)
 df$lat  <- str_trim(df$lat);df$long  <- str_trim(df$long) # retirando espacos em branco antes e depois
 df$lat <- sub(',','.',df$lat);df$long <- sub(',','.',df$long)
 str(df)
-q1;q11
+
 q1 <- df$lat;q11 <- df$long # verificando as coordenadas
 a1 <- grep('[^[:alnum:]]',q1) # vejo as linhas que tem numero e ponto
 a11 <- grep('[^[:alnum:]]',q11) # vejo as linhas que tem numero e ponto
@@ -517,7 +520,7 @@ df$lat[109] <- df$lat[109]/10000
 df$long[109] <- df$long[109]/10000
 df$long[115] <- df$long[115]/100000
 df$long[185] <- df$long[185]/1000
-
+df$lat;df$long
 q1 <- df$lat;q11 <- df$long # verificando as coordenadas
 a1 <- grep('[^[:alnum:]]',q1) # vejo as linhas que tem numero e ponto
 a11 <- grep('[^[:alnum:]]',q11) # vejo as linhas que tem numero e ponto
@@ -527,16 +530,25 @@ is.numeric(df$lat);is.numeric(df$long)
 df$lat <- df$lat*(-1);df$long <- df$long*(-1)
 df$lat;df$long
 
-###### plotar mapa e pontos pra ver se algum caiu fora do DF
+###### plotar mapa e pontos pra ver se algum caiu fora do DF # verificar daqui pra cima
 #install.packages('ggmap')
 library(ggmap)
 map_df <- 'Distrito Federal, Brazil'
-df_map <- qmap(map_df,zoom=7)
+df_map <- qmap(map_df,zoom=8)
 w <- df_map+geom_point(aes(x = long, y = lat , color = 'red'), 
                        data = df)
-ggplot_build(w) # pra descobrir a linha removida: ponto df$long[108] - tá o mesmo valor da lat, ta errado
-df$lat[108];df$long[108]
-# tem mto ponto no entorno do DF
+ww <- ggplot_build(w) # pra descobrir linhas removidas
+# df$lat[c(70,115,185)] df$long[108] [c(109)]
+df[c(70,115,185,108,109),c('lat','long')]
+
+# arrumar df[c(115,108,109),'long'] e 
+df$long[115] <- df$long[115]/100000
+df[c(109,108),c('lat','long')]
+df$
+
+# manter linha [108]
+
+# [c(70,185)] tirar linhas
 
 ###################### ES ######################
 es0 <- read.csv('ES.csv',header=T,sep=';') # 456 propriedades
@@ -610,15 +622,19 @@ es$lat;es$long
 #install.packages('ggmap')
 library(ggmap)
 map_es <- 'Espírito Santo'
-es_map <- qmap(map_es,zoom=8)
+es_map <- qmap(map_es,zoom=6)
 w <- es_map+geom_point(aes(x = long, y = lat , color = 'red'), 
                        data = es)
 ggplot_build(w) # pra descobrir a linha removida: ponto es$lat[418] - parece erro de digitacao
 es$lat[418];es$long[418]
-e[418]
+# arrumando
+e[418] # mar
 dec=c(as.numeric(e[[418]][1]),as.numeric(e[[418]][2]),as.numeric(e[[418]][3]))
 abs(dec[1])+dec[2]/60+dec[3]/3600
-# o ponto cai no mar
+
+# retirando ponto
+es_f <- es[-418,]
+
 
 ###################### GO ######################
 go0 <- read.csv('GO.csv',header=TRUE,sep=';') # 873 propriedades
@@ -689,8 +705,10 @@ go_map <- qmap(map_go,zoom=7)
 w <- go_map+geom_point(aes(x = long, y = lat , color = 'red'), 
                        data = go)
 ggplot_build(w) # pra descobrir a linha removida: ponto go$long[67]
-go[67,c(9,10)]
-# o ponto cai em MG
+# go[67,c(9,10)] o ponto cai em MG
+
+# retirar ponto
+go_f <- go[-67,]
 
 
 ###################### MA ######################
@@ -775,11 +793,15 @@ ma$lat;ma$long
 library(ggmap)
 map_ma <- 'Maranhão'
 ma_map <- qmap(map_ma,zoom=6)
-ma_map+geom_point(aes(x = long, y = lat , color = 'red'), 
+w <- ma_map+geom_point(aes(x = long, y = lat , color = 'red'), 
                        data = ma)
 
 ggplot_build(w)
 ww$data[[4]][1:30,c(2,3)]
+
+# td certo, finalisar igual
+ma_f <- ma
+str(ma_f)
 
 ###################### MG ######################
 mg0 <- read.csv('MG.csv',header=T,sep=';') # 2477 propriedades
@@ -816,6 +838,9 @@ mg[c(531,1309,1358,1364,2075),8:9] #long
 # mg$long[c(531,1364,2075)] ponto no mar
 # mg$long[c(1309,1358)] lat e long iguais
 
+mg_f <- mg[-c(171,202,805,861,873,1237,1338,1409,1597,1617),]
+str(mg_f) # 2467 c/coords
+
 
 # Contagem de propriedades: AC - MG
 prop <- c(8282,64,509,79,208,456,873,70,2477)
@@ -824,6 +849,7 @@ sum(prop) # 13018
 
 prop.coord <- c(8282,57,422,66,208,456,739,70,2477)
 sum(prop.coord) # 12720
+
 
 ###################### MS ######################
 ms0 <- read.csv('MS.csv',header=T,sep=';') # 658 propriedades
@@ -1029,9 +1055,98 @@ ms[c(169,214,452,482,532:535,537:541,604),c('lat','long')]
 # [214] Minas, [452] Paraguai, [482] Sao Paulo, [604] Goias - eliminar rows
 # [532:535] MS, MS, MS, MS, [537:541] MS, MS, MS, MS, MS - preservar rows
 
+# retirar linhas
+ms_f <- ms[-c(169,214,452,482,537:541),]
+str(ms_f)
 
 
+###################### MT ######################
+mt0 <- read.csv('MT.csv',header=T,sep=';') # 2643 propriedades
+str(mt0)
 
+mt <- mt0[which(mt0$lat_dec!=''),] # tirando rows sem coords
+str(mt) # 2342 propriedades com coords, n a verdade 2241 propriedades com coords
+names(mt)[c(8,10)] <- c('lat','long')
+
+mt$lat <- as.character(mt$lat); mt$long <- as.character(mt$long)
+str(mt)
+mt$lat <- sub(',','.',mt$lat);mt$long <- sub(',','.',mt$long)
+mt <- mt[-c(426:494,1168:1199),]
+length(mt$long[c(426:494,1168:1199)]) # sem nada nessas linhas
+str(mt)
+
+#install.packages("stringr", dependencies=TRUE)
+require(stringr)
+mt$lat  <- str_trim(mt$lat);mt$long  <- str_trim(mt$long) # retirando espacos em branco antes e depois
+head(mt)
+
+####### Ver que simbolos tem 
+q1 <- mt$lat;q11 <- mt$long
+head(q1);head(q11)
+
+q2 <- q1[1] # o primeiro linha da coluna  q escolhi
+for (i in 2:length(q1)) { # do segundo da coluna (pq o primeiro ja pequei) ate o comprimento da coluna
+  q2 <- paste0(q2, q1[i]) # juntando todas as linhas
+}
+q22 <- q11[1] # o primeiro linha da coluna  q escolhi
+for (i in 2:length(q11)) { # do segundo da coluna (pq o primeiro ja pequei) ate o comprimento da coluna
+  q22 <- paste0(q22, q11[i]) # juntando todas as linhas
+}
+
+q3 <- NA # crio um vetor vazio
+for (i in 1:nchar(q2)) { # faco um for de 1 ate o numero de caracteres do meu vetor em conjunto
+  q3 <- c(q3, substr(q2, i, i)) #  junto o q3 (que é NA no início)mais o q2 sendo que eu substituo o carcter 1 no primeiro lugar, depois o 2 no segundo e sucessivamente
+}
+q3 <- q3[-1] # tiro o primeiro elemento que era NA
+q33 <- NA # crio um vetor vazio
+for (i in 1:nchar(q22)) { # faco um for de 1 ate o numero de caracteres do meu vetor em conjunto
+  q33 <- c(q33, substr(q22, i, i)) #  junto o q3 (que é NA no início)mais o q2 sendo que eu substituo o carcter 1 no primeiro lugar, depois o 2 no segundo e sucessivamente
+}
+q33 <- q33[-1] # tiro o primeiro elemento que era NA
+
+q4 <- grep('[^[:alnum:]]', q3, value = T) # pega os simbolos
+q44 <- grep('[^[:alnum:]]', q33, value = T) # pega os simbolos
+
+u1 <- unique(q4) # tiro os repetidos, pra ver quais simbolos tenho de um jeito + limpo
+u11 <- unique(q44) # tiro os repetidos, pra ver quais simbolos tenho de um jeito + limpo
+
+u2 <- u1[-2] # tirando o simbolo de ponto
+u22 <- u11[-2] # tirando o simbolo de ponto
+
+# tenho que tirar um de cada vez
+e <- gsub(u2[1],'T',mt$lat);ee <- gsub(u22[1],'T',mt$long)
+
+# separando pelo simbolo que coloquei
+e <- strsplit(e,'T+');ee <- strsplit(ee,'T+')
+
+# antes pra ver se todas deram certo nomeia por 'LAT' ou 'LONG'
+mt$LAT <- convert(e);mt$LONG <- convert(ee) 
+is.numeric(mt$LAT);is.numeric(mt$LONG)
+mt$LAT;mt$LONG
+
+# trocando o sinal e colocando na coluna certa
+mt$LAT <- mt$LAT*(-1);mt$LONG <- mt$LONG*(-1)
+mt$LAT;mt$LONG
+
+
+###### plotar mapa e pontos pra ver se algum caiu fora do DF
+#install.packages('ggmap')
+library(ggmap)
+map_mt <- 'Mato Grosso'
+mt_map <- qmap(map_mt,zoom=6)
+w <- mt_map+geom_point(aes(x = LONG, y = LAT , color = 'red'), 
+                       data = mt)
+
+ww <- ggplot_build(w) # NAs mt$LONG[c(262,538,539,588:591,650,701,963,1054,1055,1059,1832)] mt$LAT[c(979,1038)] [c(993,1574)]
+str(ww)
+ww$data[[4]][2000:2241,] # pra ver NAs por partes - mtos dados
+mt[c(262,538,539,588:591,650,701,963,1054,1055,1059,1832),c('LAT','LONG')]
+# mt$LONG[c(262,538,539,588:591,650,963,1054,1055,1059,1832)] # mar
+# mt$LONG[701] MG 
+
+# reitar todas essas linhas mt[c(262,538,539,588:591,650,701,963,1054,1055,1059,1832),]
+mt_f <- mt[-c(262,538,539,588:591,650,701,963,1054,1055,1059,1832),] # 2227 c/coords
+str(mt_f)
 
 
 
