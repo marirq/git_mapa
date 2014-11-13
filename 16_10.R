@@ -4,7 +4,7 @@ head(ac0)
 names(ac0)[c(11,12)] <- c('lat','long')
 ac <- ac0[which(ac0$lat!=''),] # todas as linhas tem coordenadas
 str(ac) # 8282 com coord
-
+names(ac)
 ac$lat <- as.character(ac$lat); ac$long <- as.character(ac$long)
 str(ac)
 ac$lat <- sub(',','.',ac$lat); ac$long <- sub(',','.',ac$long)
@@ -38,6 +38,12 @@ map_ac <- 'State of Acre'
 ac_map <- qmap(map_ac,zoom=5)
 ac_map+geom_point(aes(x = long, y = lat, color = cor ), 
                   data = ac)
+
+###################### Para tranformar em excel depois ######################
+library(xlsx)
+str(a)
+write.xlsx(am, "/media/mariana/MRQ - HD externo/DOUTORADO/projeto_aves/banco_dout/am.xlsx")
+
 
 
 ###################### AM ######################
@@ -1153,12 +1159,7 @@ str(mt_f)
 ###################### Para tranformar em excel depois ######################
 library(xlsx)
 write.xlsx(am, "/media/mariana/MRQ - HD externo/DOUTORADO/projeto_aves/banco_dout/am.xlsx")
-getwd()
-head(am)
-am2 <- gsub(NA,'00',am)
-head(am2)
 
-w$data[[4]]
 
 ################################ Sistemas de Coords ################################################
 # O sistema de coordenada (DATUM)  em Grau, do Google Earth e da maioria dos mapas na internet é a WGS84
