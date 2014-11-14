@@ -1052,11 +1052,13 @@ str(ms) # 595 prop com coords
 
 
 ###################### MT ######################
+# quase ok
+# retirar rows com ptos no mar pelo ArqGIS
 mt0 <- read.csv('MT.csv',header=T,sep=';') # 2643 propriedades
 str(mt0)
 
 mt1 <- mt0[which(mt0$lat_dec!=''),] # tirando rows sem coords
-str(mt1)
+str(mt1) # 2342 prop
 mt <- mt1[which(mt1$long_dec!=''),] # tirando rows sem coords
 str(mt) # 2241 prop com coords
 names(mt)[c(8,10)] <- c('lat','long')
@@ -1120,8 +1122,7 @@ mt$LAT;mt$LONG
 # trocando o sinal
 mt$LAT <- mt$LAT*(-1);mt$LONG <- mt$LONG*(-1)
 mt$LAT;mt$LONG
-mt$lat <- mt$LAT;mt$long <- mt$LONG
-mt$lat;mt$long
+
 
 ###### plotar mapa e pontos pra ver se algum caiu fora do DF
 #install.packages('ggmap')
@@ -1134,24 +1135,22 @@ w <- mt_map+geom_point(aes(x = long, y = lat , color = 'red'),
 ww <- ggplot_build(w) 
 str(ww)
 ww$data[[4]][!complete.cases(ww$data[[4]][,c(2,3)]),c(2,3)] # 20 missing rows
-# NAs mt$long[c(2,7,262,538,539,588:591,650,701,963,1054,1055,1059,1832)] mt$LAT[c(979,1038)] [c(993,1574)]
+# NAs mt$long[c(3,7,262,538,539,588:591,650,701,963,1054,1055,1059,1832)] mt$LAT[c(979,1038)] [c(993,1574)]
 mt[c(3,7,262,538,539,588:591,650,701,963,1054,1055,1059,1832,979,1038,993, 1574),c('lat','long')]
-mt[c(262,538,539,588:591,650,701,963,1054,1055,1059,1832),c('lat','long')]
 # mt[c(3,7)] - Peru; mg[c(650,701)] - MG
 # mt[c(262,979,993)] - errado
 # mt[c(538,539,588:591,963,1054,1055,1059,1832,1038)] - mar
 # mt[1574,c('lat','long')] estão trocados
+mt$lat <- mt$LAT;mt$long <- mt$LONG
+mt$lat;mt$long
 mt$lat[1574] <- mt$LONG[1574]
 mt$long[1574] <- mt$LAT[1574]
+names(mt)
 
-
-# mt$LONG[c(262,538,539,588:591,650,963,1054,1055,1059,1832)] # mar
-# mt$LONG[701] MG 
-
-# reitar todas essas linhas mt[c(262,538,539,588:591,650,701,963,1054,1055,1059,1832),]
-mt_f <- mt[-c(262,538,539,588:591,650,701,963,1054,1055,1059,1832),] # 2227 c/coords
-str(mt_f)
-
+# reitar essas 19 linhas mt[c(3,7,650,701,262,979,993,538,539,588:591,963,1054,1055,1059,1832,1038),]
+mt <- mt[-c(3,7,650,701,262,979,993,538,539,588:591,963,1054,1055,1059,1832,1038),] # 2222 c/coords
+str(mt)
+# falta tirar ptos em torno do MT no ArqGIS
 
 
 ###################### Para tranformar em excel depois ######################
