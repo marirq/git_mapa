@@ -34,6 +34,8 @@ ac_map+geom_point(aes(x = long, y = lat, color = 'red' ),
 str(ac)
 #write.xlsx(ac, "path")
 
+### transformar p/.csv e depois .xls 
+write.csv2(ac,file='AC_mrq.csv',sep=';')
 
 
 ###################### AM ######################
@@ -1153,9 +1155,134 @@ str(mt)
 # falta tirar ptos em torno do MT no ArqGIS
 
 
-###################### Para tranformar em excel depois ######################
-library(xlsx)
-write.xlsx(am, "/media/mariana/MRQ - HD externo/DOUTORADO/projeto_aves/banco_dout/am.xlsx")
+###################### PA ######################
+# OK
+pa0 <- read.csv('PA.csv',header=T,sep=';') 
+pa <- pa0[which(pa0$LATITUDE_S..DECIMAL.!=''),] # eliminando rows sem coords
+str(pa)
+
+names(pa)[c(12,13)] <- c('lat','long')
+str(pa)
+
+require(stringr)
+pa$lat  <- str_trim(pa$lat);pa$long  <- str_trim(pa$long) # retirando espacos em branco antes e depois
+head(pa)
+
+pa$lat <- as.character(pa$lat);pa$long <- as.character(pa$long)
+str(pa)
+
+pa$lat <- sub(',','.',pa$lat);pa$long <- sub(',','.',pa$long)
+str(pa)
+
+####### Ver que simbolos tem 
+q1 <- pa$lat;q11 <- pa$long
+head(q1);head(q11)
+
+q2 <- q1[1] # o primeiro linha da coluna  q escolhi
+for (i in 2:length(q1)) { # do segundo da coluna (pq o primeiro ja pequei) ate o comprimento da coluna
+  q2 <- paste0(q2, q1[i]) # juntando todas as linhas
+}
+q22 <- q11[1] # o primeiro linha da coluna  q escolhi
+for (i in 2:length(q11)) { # do segundo da coluna (pq o primeiro ja pequei) ate o comprimento da coluna
+  q22 <- paste0(q22, q11[i]) # juntando todas as linhas
+}
+
+q3 <- NA # crio um vetor vazio
+for (i in 1:nchar(q2)) { # faco um for de 1 ate o numero de caracteres do meu vetor em conjunto
+  q3 <- c(q3, substr(q2, i, i)) #  junto o q3 (que é NA no início)mais o q2 sendo que eu substituo o carcter 1 no primeiro lugar, depois o 2 no segundo e sucessivamente
+}
+q3 <- q3[-1] # tiro o primeiro elemento que era NA
+q33 <- NA # crio um vetor vazio
+for (i in 1:nchar(q22)) { # faco um for de 1 ate o numero de caracteres do meu vetor em conjunto
+  q33 <- c(q33, substr(q22, i, i)) #  junto o q3 (que é NA no início)mais o q2 sendo que eu substituo o carcter 1 no primeiro lugar, depois o 2 no segundo e sucessivamente
+}
+q33 <- q33[-1] # tiro o primeiro elemento que era NA
+
+q4 <- grep('[^[:alnum:]]', q3, value = T) # pega os simbolos
+q44 <- grep('[^[:alnum:]]', q33, value = T) # pega os simbolos
+
+u1 <- unique(q4) # tiro os repetidos, pra ver quais simbolos tenho de um jeito + limpo
+u11 <- unique(q44) # tiro os repetidos, pra ver quais simbolos tenho de um jeito + limpo
+
+u2 <- u1[-4] # tirando o simbolo de ponto
+u22 <- u11[-4] # tirando o simbolo de ponto
+
+# tenho que tirar um de cada vez
+e <- gsub(u2[1],'T',pa$lat);ee <- gsub(u22[1],'T',pa$long)
+e <- gsub(u2[2],'T',e);ee <- gsub(u22[2],'T',ee)
+e <- gsub(u2[3],'T',e);ee <- gsub(u22[3],'T',ee)
+e <- gsub(u2[4],'T',e);ee <- gsub(u22[4],'T',ee)
+e <- gsub(u2[5],'T',e);ee <- gsub(u22[5],'T',ee)
+e;ee
+
+# separando pelo simbolo que coloquei
+e <- strsplit(e,'T+');ee <- strsplit(ee,'T+')
+
+# antes pra ver se todas deram certo nomeia por 'LAT' ou 'LONG'
+pa$LAT <- convert(e);pa$LONG <- convert(ee) 
+is.numeric(pa$LAT);is.numeric(pa$LONG)
+pa$LAT;pa$LONG
+
+pa[!complete.cases(pa$LAT),] #  9 rows com NAs - pa[c(192,206:212,214),c('LAT','LONG')]
+f <- pa[c(192,206:212,214),c('lat','long')]
+####### Ver que simbolos tem 
+q1 <- f$lat;q11 <- f$long
+head(q1);head(q11)
+
+q2 <- q1[1] # o primeiro linha da coluna  q escolhi
+for (i in 2:length(q1)) { # do segundo da coluna (pq o primeiro ja pequei) ate o comprimento da coluna
+  q2 <- paste0(q2, q1[i]) # juntando todas as linhas
+}
+q22 <- q11[1] # o primeiro linha da coluna  q escolhi
+for (i in 2:length(q11)) { # do segundo da coluna (pq o primeiro ja pequei) ate o comprimento da coluna
+  q22 <- paste0(q22, q11[i]) # juntando todas as linhas
+}
+
+q3 <- NA # crio um vetor vazio
+for (i in 1:nchar(q2)) { # faco um for de 1 ate o numero de caracteres do meu vetor em conjunto
+  q3 <- c(q3, substr(q2, i, i)) #  junto o q3 (que é NA no início)mais o q2 sendo que eu substituo o carcter 1 no primeiro lugar, depois o 2 no segundo e sucessivamente
+}
+q3 <- q3[-1] # tiro o primeiro elemento que era NA
+q33 <- NA # crio um vetor vazio
+for (i in 1:nchar(q22)) { # faco um for de 1 ate o numero de caracteres do meu vetor em conjunto
+  q33 <- c(q33, substr(q22, i, i)) #  junto o q3 (que é NA no início)mais o q2 sendo que eu substituo o carcter 1 no primeiro lugar, depois o 2 no segundo e sucessivamente
+}
+q33 <- q33[-1] # tiro o primeiro elemento que era NA
+
+q4 <- grep('[^[:alnum:]]', q3, value = T) # pega os simbolos
+q44 <- grep('[^[:alnum:]]', q33, value = T) # pega os simbolos
+
+u1 <- unique(q4) # tiro os repetidos, pra ver quais simbolos tenho de um jeito + limpo
+u11 <- unique(q44) # tiro os repetidos, pra ver quais simbolos tenho de um jeito + limpo
+
+u2 <- u1[-3];u22 <- u11[-3]
+
+# tenho que tirar um de cada vez
+e <- gsub(u2[1],'T',f$lat);ee <- gsub(u22[1],'T',f$long)
+e <- gsub(u2[2],'T',e);ee <- gsub(u22[2],'T',ee)
+e <- gsub(u2[3],'T',e);ee <- gsub(u22[3],'T',ee)
+ee <- gsub(u22[4],'T',ee)
+e <- gsub('º','T',e);ee <- gsub('º','T',ee)
+e;ee
+
+# separando pelo simbolo que coloquei
+e <- strsplit(e,'T+');ee <- strsplit(ee,'T+')
+
+f$lat <- convert(e);f$long <- convert(ee)
+f
+pa[c(192,206:212,214),'LAT'] <- f$lat;pa[c(192,206:212,214),'LONG'] <- f$long
+pa[c(192,206:212,214),c('LAT','LONG')]
+pa$LAT;pa$LONG
+pa$lat <- pa$LAT*(-1);pa$long <- pa$LONG*(-1)
+pa$lat;pa$long
+
+###### plotar mapa e pontos pra ver se algum caiu fora 
+#install.packages('ggmap')
+library(ggmap)
+map_pa <- 'State of Pará'
+pa_map <- qmap(map_pa,zoom=5)
+w <- pa_map+geom_point(aes(x = long, y = lat , color = 'red'), 
+                       data = pa)
 
 
 ################################ Sistemas de Coords ################################################
