@@ -1285,6 +1285,98 @@ w <- pa_map+geom_point(aes(x = long, y = lat , color = 'red'),
                        data = pa)
 
 
+
+###################### PB ######################
+# quase ok, precisa tirar uns ptos com ArqGIS
+pb0 <- read.csv('PB.csv',header=T,sep=';') 
+str(pb0) # 603 rows
+pb <- pb0[which(pb0$LATITUDE.S!=''),] # eliminando rows sem coords
+str(pb) # 570 prop com coords
+
+names(pb)[c(8,9)] <- c('lat','long')
+str(pb)
+
+require(stringr)
+pb$lat  <- str_trim(pb$lat);pb$long  <- str_trim(pb$long) # retirando espacos em branco antes e depois
+head(pb)
+
+pb$lat <- as.character(pb$lat);pb$long <- as.character(pb$long)
+str(pb)
+
+pb$lat <- sub(',','.',pb$lat);pb$long <- sub(',','.',pb$long)
+str(pb)
+
+####### Ver que simbolos tem 
+q1 <- pb$lat;q11 <- pb$long
+head(q1);head(q11)
+
+q2 <- q1[1] # o primeiro linha da coluna  q escolhi
+for (i in 2:length(q1)) { # do segundo da coluna (pq o primeiro ja pequei) ate o comprimento da coluna
+  q2 <- paste0(q2, q1[i]) # juntando todas as linhas
+}
+q22 <- q11[1] # o primeiro linha da coluna  q escolhi
+for (i in 2:length(q11)) { # do segundo da coluna (pq o primeiro ja pequei) ate o comprimento da coluna
+  q22 <- paste0(q22, q11[i]) # juntando todas as linhas
+}
+
+q3 <- NA # crio um vetor vazio
+for (i in 1:nchar(q2)) { # faco um for de 1 ate o numero de caracteres do meu vetor em conjunto
+  q3 <- c(q3, substr(q2, i, i)) #  junto o q3 (que é NA no início)mais o q2 sendo que eu substituo o carcter 1 no primeiro lugar, depois o 2 no segundo e sucessivamente
+}
+q3 <- q3[-1] # tiro o primeiro elemento que era NA
+q33 <- NA # crio um vetor vazio
+for (i in 1:nchar(q22)) { # faco um for de 1 ate o numero de caracteres do meu vetor em conjunto
+  q33 <- c(q33, substr(q22, i, i)) #  junto o q3 (que é NA no início)mais o q2 sendo que eu substituo o carcter 1 no primeiro lugar, depois o 2 no segundo e sucessivamente
+}
+q33 <- q33[-1] # tiro o primeiro elemento que era NA
+
+q4 <- grep('[^[:alnum:]]', q3, value = T) # pega os simbolos
+q44 <- grep('[^[:alnum:]]', q33, value = T) # pega os simbolos
+
+u1 <- unique(q4) # tiro os repetidos, pra ver quais simbolos tenho de um jeito + limpo
+u11 <- unique(q44) # tiro os repetidos, pra ver quais simbolos tenho de um jeito + limpo
+
+u2 <- u1[-2] # tirando o simbolo de ponto
+u22 <- u11[-2] # tirando o simbolo de ponto
+
+# tenho que tirar um de cada vez
+e <- gsub(u2[1],'T',pb$lat);ee <- gsub(u22[1],'T',pb$long)
+e <- gsub(u2[2],'T',e);ee <- gsub(u22[2],'T',ee)
+e <- gsub(u2[3],'T',e);ee <- gsub(u22[3],'T',ee)
+e <- gsub(u2[4],'T',e);ee <- gsub(u22[4],'T',ee)
+e <- gsub(u2[5],'T',e);ee <- gsub(u22[5],'T',ee)
+e <- gsub(u2[6],'T',e);ee <- gsub(u22[6],'T',ee)
+e <- gsub(u2[7],'T',e);ee <- gsub(u22[7],'T',ee)
+e <- gsub('º','T',e);ee <- gsub('º','T',ee)
+e;ee
+
+# separando pelo simbolo que coloquei
+e <- strsplit(e,'T+');ee <- strsplit(ee,'T+')
+
+# antes pra ver se todas deram certo nomeia por 'LAT' ou 'LONG'
+pb$LAT <- convert(e);pb$LONG <- convert(ee) 
+is.numeric(pb$LAT);is.numeric(pb$LONG)
+pb$LAT;pb$LONG 
+
+# trocar sinal e por no lugar certo
+pb$lat <- pb$LAT*(-1);pb$long <- pb$LONG*(-1)
+pb$lat;pb$long
+
+###### plotar mapa e pontos pra ver se algum caiu fora
+#install.packages('ggmap')
+library(ggmap)
+map_pb <- 'Paraiba'
+pb_map <- qmap(map_pb,zoom=7)
+w <- pb_map+geom_point(aes(x = long, y = lat , color = 'red'), 
+                       data = pb)
+
+ggplot_build(w) 
+pb[483,c('lat','long')] # coord errada, tirar
+str(pb)
+pb <- pb[-483,]
+str(pb) # 569 prop com coords
+# precisa tirar uns ptos com ArqGIS
+
 ################################ Sistemas de Coords ################################################
 # O sistema de coordenada (DATUM)  em Grau, do Google Earth e da maioria dos mapas na internet é a WGS84
 
