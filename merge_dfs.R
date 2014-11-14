@@ -10,6 +10,7 @@ names(ma)
 names(mg)
 names(ms)
 names(mt)
+names(pa)
 
 a <- merge(ac[,c(2,1,11,12)],am[,c(2,1,11,12)],all=TRUE)
 a <- merge(a,ba[,c(2,1,8,9)],all=TRUE)
@@ -20,15 +21,12 @@ a <- merge(a,go[,c(2,1,9,10)],all=TRUE)
 a <- merge(a,ma[,c(2,1,11,12)],all=TRUE)
 a <- merge(a,mg[,c(2,1,8,9)],all=TRUE)
 a <- merge(a,ms[,c(2,1,11,12)],all=TRUE)
-# ainda nao esta arrumado a <- merge(a,mt[,c(2,1,8,10)],all=TRUE)
+a <- merge(a,mt[,c(2,1,8,10)],all=TRUE)
+a <- merge(a,pa[,c(2,1,12,13)],all=TRUE)
 
 head(a)
 tail(a)
-
-str(ac) # 8282 com coord
-str(am) # 57 com coord
-str(ba) # 422 com coord
-
+str(a) 
 
 ###### plotar mapa e pontos ######
 library(ggmap)
