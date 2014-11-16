@@ -1,4 +1,4 @@
-################### AC ################### 
+################### AC ###################  
 # OK
 ac0 <- read.csv('AC.csv', header=TRUE, sep=';') # 8282 propriedades
 head(ac0)

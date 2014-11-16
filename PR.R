@@ -12,7 +12,7 @@ require(stringr)
 pr$lat  <- str_trim(pr$lat);pr$long  <- str_trim(pr$long) # retirando espacos em branco antes e depois
 str(pr)
 
-pr$lat <- sub(',','.',pr$lat);pr$long <- sub(',','.',pr$long)
+pr$lat <- sub(',','.',pr$lat);pr$long <- sub(',','.',pr$long) # caso tenha alguma virgula
 str(pr)
 
 ####### Ver que simbolos tem 
@@ -44,7 +44,12 @@ q44 <- grep('[^[:alnum:]]', q33, value = T) # pega os simbolos
 
 u1 <- unique(q4) # tiro os repetidos, pra ver quais simbolos tenho de um jeito + limpo
 u11 <- unique(q44) # tiro os repetidos, pra ver quais simbolos tenho de um jeito + limpo
-
+# testando tirar espacos FAZER NO LEB!!!
+# tirar os espacos
+e <- gsub(u1[1],'T',pr$lat[7485:7495]);ee <- gsub(u11[1],'T',pr$long[7485:7495])
+e;ee
+e <- 
+  
 # dados sem ponto, transformar pra decimal
 a <- nchar(pr$lat) # vendo quantos digitos tem em cada
 unique(a) # para isolar os repetidos e saber qtos caracteres tem cada
@@ -57,7 +62,7 @@ str(pr)
 
 grep('[^[:digit:]]',pr$lat,value=T)
 
-str_trim(pr$lat[7491])
+pr$lat[7485:7495]
 
 sub(pr$lat[1])
 
