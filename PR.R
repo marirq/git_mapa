@@ -45,27 +45,44 @@ q44 <- grep('[^[:alnum:]]', q33, value = T) # pega os simbolos
 u1 <- unique(q4) # tiro os repetidos, pra ver quais simbolos tenho de um jeito + limpo
 u11 <- unique(q44) # tiro os repetidos, pra ver quais simbolos tenho de um jeito + limpo
 
-u2 <- u1[-3] # tirando o simbolo de ponto
-u22 <- u11[-3] # tirando o simbolo de ponto
+# dados sem ponto, transformar pra decimal
+a <- nchar(pr$lat) # vendo quantos digitos tem em cada
+unique(a) # para isolar os repetidos e saber qtos caracteres tem cada
 
-# tenho que tirar um de cada vez
-e <- gsub(u2[1],'T',pi$lat);ee <- gsub(u22[1],'T',pi$long)
-e <- gsub(u2[2],'T',e);ee <- gsub(u22[2],'T',ee)
-e <- gsub(u2[3],'T',e);ee <- gsub(u22[3],'T',ee)
-e <- gsub(u2[4],'T',e);ee <- gsub(u22[4],'T',ee)
-e <- gsub(u2[5],'T',e)
-e <- gsub(u2[6],'T',e)
-e <- gsub('º','T',e);ee <- gsub('º','T',ee)
-e;ee
-# FAZER
-# separando pelo simbolo que coloquei
-e <- strsplit(e,'T+');ee <- strsplit(ee,'T+')
+# retirar espacos e transformar em numeric
+require(stringr)
+pr$lat  <- str_trim(pr$lat);pr$long  <- str_trim(pr$long) # retirando espacos em branco antes e depois
 
-# antes pra ver se todas deram certo nomeia por 'LAT' ou 'LONG'
-pi$LAT <- convert(e);pi$LONG <- convert(ee) 
-is.numeric(pi$LAT);is.numeric(pi$LONG)
-pi$LAT;pi$LONG 
+str(pr)
 
+grep('[^[:digit:]]',pr$lat,value=T)
+
+str_trim(pr$lat[7491])
+
+sub(pr$lat[1])
+
+
+b <- dec.pr(as.numeric(pr$lat))
+head(pr$lat)
+class(pr$lat)
+as.numeric(pr$lat[nchar(pr$lat)==5])/1000
+as.numeric(pr$lat[5415])/100
+
+
+dec.pr <- function(x){  
+  if (nchar(x)==5){
+  x/1000  
+  }
+  if (nchar(x)==6){
+  x/10000
+  }
+  if (nchar(x)==7){
+    x/100000
+  }
+  if (nchar(x)==8){
+    x/1000000
+  }
+}
 
 
 
