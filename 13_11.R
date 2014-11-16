@@ -1546,8 +1546,163 @@ pe$long[932] <- pe$long[932]/10
 
 # eliminar coords erradas
 pe <- pe[-c(270,342,654,686,702,706,1156,1240,738,842,24,52,683),]
-str(pe)
+str(pe) # 1241 prop com coords
 # eliminar ptos fora pelo ArqGIS
+
+
+###################### PI ######################
+# quase ok, falta eliminar pontos fora no ArqGIS
+pi0 <- read.csv('PI.csv',header=T,sep=';') 
+str(pi0) # 114 rows
+pi <- pi0[which(pi0$LATITUDE_S..DECIMAL.!=''),] # eliminando rows sem coords
+str(pe) # 114 prop com coords
+
+names(pi)[c(9,10)] <- c('lat','long')
+str(pi)
+
+require(stringr)
+pi$lat  <- str_trim(pi$lat);pi$long  <- str_trim(pi$long) # retirando espacos em branco antes e depois
+str(pi)
+
+pi$lat <- sub(',','.',pi$lat);pi$long <- sub(',','.',pi$long)
+str(pi)
+
+####### Ver que simbolos tem 
+q1 <- pi$lat;q11 <- pi$long
+head(q1);head(q11)
+
+q2 <- q1[1] # o primeiro linha da coluna  q escolhi
+for (i in 2:length(q1)) { # do segundo da coluna (pq o primeiro ja pequei) ate o comprimento da coluna
+  q2 <- paste0(q2, q1[i]) # juntando todas as linhas
+}
+q22 <- q11[1] # o primeiro linha da coluna  q escolhi
+for (i in 2:length(q11)) { # do segundo da coluna (pq o primeiro ja pequei) ate o comprimento da coluna
+  q22 <- paste0(q22, q11[i]) # juntando todas as linhas
+}
+
+q3 <- NA # crio um vetor vazio
+for (i in 1:nchar(q2)) { # faco um for de 1 ate o numero de caracteres do meu vetor em conjunto
+  q3 <- c(q3, substr(q2, i, i)) #  junto o q3 (que é NA no início)mais o q2 sendo que eu substituo o carcter 1 no primeiro lugar, depois o 2 no segundo e sucessivamente
+}
+q3 <- q3[-1] # tiro o primeiro elemento que era NA
+q33 <- NA # crio um vetor vazio
+for (i in 1:nchar(q22)) { # faco um for de 1 ate o numero de caracteres do meu vetor em conjunto
+  q33 <- c(q33, substr(q22, i, i)) #  junto o q3 (que é NA no início)mais o q2 sendo que eu substituo o carcter 1 no primeiro lugar, depois o 2 no segundo e sucessivamente
+}
+q33 <- q33[-1] # tiro o primeiro elemento que era NA
+
+q4 <- grep('[^[:alnum:]]', q3, value = T) # pega os simbolos
+q44 <- grep('[^[:alnum:]]', q33, value = T) # pega os simbolos
+
+u1 <- unique(q4) # tiro os repetidos, pra ver quais simbolos tenho de um jeito + limpo
+u11 <- unique(q44) # tiro os repetidos, pra ver quais simbolos tenho de um jeito + limpo
+
+u2 <- u1[-3] # tirando o simbolo de ponto
+u22 <- u11[-3] # tirando o simbolo de ponto
+
+# tenho que tirar um de cada vez
+e <- gsub(u2[1],'T',pi$lat);ee <- gsub(u22[1],'T',pi$long)
+e <- gsub(u2[2],'T',e);ee <- gsub(u22[2],'T',ee)
+e <- gsub(u2[3],'T',e);ee <- gsub(u22[3],'T',ee)
+e <- gsub(u2[4],'T',e);ee <- gsub(u22[4],'T',ee)
+e <- gsub(u2[5],'T',e)
+e <- gsub(u2[6],'T',e)
+e <- gsub('º','T',e);ee <- gsub('º','T',ee)
+e;ee
+
+# separando pelo simbolo que coloquei
+e <- strsplit(e,'T+');ee <- strsplit(ee,'T+')
+
+# antes pra ver se todas deram certo nomeia por 'LAT' ou 'LONG'
+pi$LAT <- convert(e);pi$LONG <- convert(ee) 
+is.numeric(pi$LAT);is.numeric(pi$LONG)
+pi$LAT;pi$LONG 
+
+pi[!complete.cases(pi[,c('LAT','LONG')]),] # NAs pi$LAT[95] pi$LONG[c(15,25.76)]
+f <- pi[c(15,25,76,95),c('lat','long')]
+####### Ver que simbolos tem 
+q1 <- f$lat;q11 <- f$long
+head(q1);head(q11)
+
+q2 <- q1[1] # o primeiro linha da coluna  q escolhi
+for (i in 2:length(q1)) { # do segundo da coluna (pq o primeiro ja pequei) ate o comprimento da coluna
+  q2 <- paste0(q2, q1[i]) # juntando todas as linhas
+}
+q22 <- q11[1] # o primeiro linha da coluna  q escolhi
+for (i in 2:length(q11)) { # do segundo da coluna (pq o primeiro ja pequei) ate o comprimento da coluna
+  q22 <- paste0(q22, q11[i]) # juntando todas as linhas
+}
+
+q3 <- NA # crio um vetor vazio
+for (i in 1:nchar(q2)) { # faco um for de 1 ate o numero de caracteres do meu vetor em conjunto
+  q3 <- c(q3, substr(q2, i, i)) #  junto o q3 (que é NA no início)mais o q2 sendo que eu substituo o carcter 1 no primeiro lugar, depois o 2 no segundo e sucessivamente
+}
+q3 <- q3[-1] # tiro o primeiro elemento que era NA
+q33 <- NA # crio um vetor vazio
+for (i in 1:nchar(q22)) { # faco um for de 1 ate o numero de caracteres do meu vetor em conjunto
+  q33 <- c(q33, substr(q22, i, i)) #  junto o q3 (que é NA no início)mais o q2 sendo que eu substituo o carcter 1 no primeiro lugar, depois o 2 no segundo e sucessivamente
+}
+q33 <- q33[-1] # tiro o primeiro elemento que era NA
+
+q4 <- grep('[^[:alnum:]]', q3, value = T) # pega os simbolos
+q44 <- grep('[^[:alnum:]]', q33, value = T) # pega os simbolos
+
+u1 <- unique(q4) # tiro os repetidos, pra ver quais simbolos tenho de um jeito + limpo
+u11 <- unique(q44) # tiro os repetidos, pra ver quais simbolos tenho de um jeito + limpo
+
+u2 <- u1[-3] # tirando o simbolo de ponto
+u22 <- u11[-3] # tirando o simbolo de ponto
+
+# tenho que tirar um de cada vez
+e <- gsub(u2[1],'T',f$lat);ee <- gsub(u22[1],'T',f$long)
+e <- gsub(u2[2],'T',e);ee <- gsub(u22[2],'T',ee)
+e <- gsub(u2[3],'T',e)
+e <- gsub('º','T',e);ee <- gsub('º','T',ee)
+e;ee
+
+# separando pelo simbolo que coloquei
+e <- strsplit(e,'T+');ee <- strsplit(ee,'T+')
+
+# arrumar NAs pi$LAT[95] pi$LONG[c(15,25.76)]
+e # lat
+e[[4]][3] <-  sub(e[[4]][3],'20.15',e[[4]][3])
+ee #long
+ee[[1]][3] <- sub(ee[[1]][3],'10.9',ee[[1]][3])
+ee[[2]][3] <- sub(ee[[2]][3],'2.7',ee[[2]][3])
+ee[[3]][3] <- sub(ee[[3]][3],'25.57',ee[[3]][3])
+e;ee
+f$lat <- convert(e);f$long <- convert(ee)
+f
+
+# colocar no lugar certo
+pi$LAT[c(15,25,76,95)] <- f$lat
+pi$LONG[c(15,25,76,95)] <- f$long
+pi$LAT;pi$LONG
+
+# mudar o sinal e colocar na coluna final
+pi$lat <- pi$LAT*(-1);pi$long <- pi$LONG*(-1)
+pi$lat;pi$long
+
+###### plotar mapa e pontos pra ver se algum caiu fora
+#install.packages('ggmap')
+library(ggmap)
+map_pi <- 'Piauí'
+pi_map <- qmap(map_pi,zoom=6)
+w <- pi_map+geom_point(aes(x = long, y = lat , color = 'red'), 
+                       data = pi)
+
+ggplot_build(w) 
+
+# 1 mising row pi$lat[74]
+pi[74,c('lat','long')] # mar, tirar
+
+pi <- pi[-74,]
+str(pi) # 113 prop c/coords
+# eliminar pontos fora no ArqGIS
+
+
+
+
 
 
 ################################ Sistemas de Coords ################################################
