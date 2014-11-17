@@ -1,7 +1,7 @@
 ################### AC ################### 
 # OK
 ac0 <- read.csv('AC.csv', header=TRUE, sep=';') # 8282 propriedades
-head(ac0)
+str(ac0)
 names(ac0)[c(11,12)] <- c('lat','long')
 ac <- ac0[which(ac0$lat!=''),] # todas as linhas tem coordenadas
 str(ac) # 8282 com coord
@@ -26,14 +26,6 @@ ac_map <- qmap(map_ac,zoom=6)
 ac_map+geom_point(aes(x = long, y = lat, color = 'red' ), 
                   data = ac)
 
-######tranformar em excel depois 
-# preciso transformar
-#install.packages('xlsx')
-#install.packages('rJava')
-#library(xlsx)
-str(ac)
-#write.xlsx(ac, "path")
-
 ### transformar p/.csv e depois .xls 
 write.csv2(ac,file='AC_mrq.csv',sep=';')
 
@@ -47,15 +39,11 @@ str(am0)
 am <- am0[which(am0$lat!=''),] # removendo linhas sem coordenadas
 str(am) # 57 com coord
 
-am$lat <- as.character(am$lat); am$long <- as.character(am$long)
-str(am)
-am$lat <- sub(',','.',am$lat);am$long <- sub(',','.',am$long)
-
 #install.packages("stringr", dependencies=TRUE)
 require(stringr)
 am$lat  <- str_trim(am$lat);am$long  <- str_trim(am$long) # retirando espacos em branco antes e depois
-
-head(am)
+str(am)
+am$lat <- sub(',','.',am$lat);am$long <- sub(',','.',am$long)
 str(am)
 
 ####### Ver que simbolos tem 
@@ -98,6 +86,7 @@ e <- gsub(u2[3],'T',e);ee <- gsub(u22[3],'T',ee)
 e <- gsub(u2[4],'T',e);ee <- gsub(u22[4],'T',ee)
 e <- gsub(u2[5],'T',e);ee <- gsub(u22[5],'T',ee)
 e <- gsub(u2[6],'T',e);ee <- gsub(u22[6],'T',ee)
+e;ee
 
 # separando pelo simbolo que coloquei
 e <- strsplit(e,'T+')
@@ -142,12 +131,17 @@ am$lat;am$long
 ###### plotar mapa e pontos pra ver se algum caiu fora do AM
 #install.packages('ggmap')
 library(ggmap)
-str(am)
-# mapa
 map_am <- 'Amazonas'
 am_map <- qmap(map_am,zoom=5)
 am_map+geom_point(aes(x = long, y = lat , color = 'red'), 
                   data = am)
+
+#install.packages("stringr", dependencies=TRUE)
+require(stringr)
+am$lat  <- str_trim(am$lat);am$long  <- str_trim(am$long) # retirando espacos em branco antes e depois
+
+### transformar p/.csv e depois .xls 
+write.csv2(am,file='AM_mrq.csv',sep=';')
 
 
 ###################### BA ######################
@@ -161,16 +155,13 @@ levels(ba0$lat)
 ba <- ba0[which(ba0$lat!="Não informado"),]
 ba <- ba[which(ba$lat!=""),]
 str(ba) # 422 com coord
-ba$lat <- as.character(ba$lat); ba$long <- as.character(ba$long)
-str(ba)
-ba$lat <- sub(',','.',ba$lat);ba$long <- sub(',','.',ba$long)
-str(ba)
 
-#install.packages("stringr", dependencies=TRUE)
 require(stringr)
 ba$lat  <- str_trim(ba$lat);ba$long  <- str_trim(ba$long) # retirando espacos em branco antes e depois
 str(ba)
 
+ba$lat <- sub(',','.',ba$lat);ba$long <- sub(',','.',ba$long)
+str(ba)
 
 ####### Ver que simbolos tem 
 q1 <- ba$lat;q11 <- ba$long
@@ -325,32 +316,20 @@ str(ba)
 ba$lat <- (ba$lat)*(-1);ba$long <- (ba$long)*(-1)
 ba$lat;ba$long
 
-# adicionar coluna para dar cor as propriedades
-str(ba)
-ba$CLASSIFICAÇÃO <- as.factor(ba$CLASSIFICAÇÃO)
-str(ba)
-levels(ba$CLASSIFICAÇÃO) # "733" "748" "749" "788"
-ba$cor <- NA
-str(ba)
-ba[which(ba$CLASSIFICAÇÃO=="733"),'cor']=1
-ba[which(ba$CLASSIFICAÇÃO=="748"),'cor']=2
-ba[which(ba$CLASSIFICAÇÃO=="749"),'cor']=3
-ba[which(ba$CLASSIFICAÇÃO=="788"),'cor']=4
-
-
 ###### plotar mapa e pontos pra ver se algum caiu fora do AM
 #install.packages('ggmap')
 library(ggmap)
-# mapa
 map_ba <- 'State of Bahia'
 ba_map <- qmap(map_ba,zoom=6)
 ba_map+geom_point(aes(x = long, y = lat , color = 'red'), 
                   data = ba)
 
+### transformar p/.csv e depois .xls 
+write.csv2(ba,file='BA_mrq.csv',sep=';')
+
 
 ###################### CE ######################
 # OK
-
 ce0 <- read.csv('CE2.csv',header=TRUE,sep=';') # 79 propriedades
 str(ce0)
 names(ce0)[c(13,16)] <- c('lat','long')
@@ -360,15 +339,10 @@ ce <- ce0[which(ce0$lat != ""),]
 str(ce) # 66 prop c/coord
 levels(ce$lat)
 
-
-ce$lat <- as.character(ce$lat); ce$long <- as.character(ce$long)
-str(ce)
-ce$lat <- sub(',','.',ce$lat);ce$long <- sub(',','.',ce$long)
-str(ce)
-
-#install.packages("stringr", dependencies=TRUE)
 require(stringr)
 ce$lat  <- str_trim(ce$lat);ce$long  <- str_trim(ce$long) # retirando espacos em branco antes e depois
+str(ce)
+ce$lat <- sub(',','.',ce$lat);ce$long <- sub(',','.',ce$long)
 str(ce)
 
 ####### Ver que simbolos tem 
@@ -461,6 +435,9 @@ ce$lat[15]
 ce$lat;ce$long
 ce$lat[15] <- ce$lat[15]/100000 #faltava um ponto, resolvendo a divisao deu certo
 
+### transformar p/.csv e depois .xls 
+write.csv2(ce,file='CE_mrq.csv',sep=';')
+
 
 ###################### DF ######################
 # quase ok
@@ -529,24 +506,26 @@ df <- df[-c(70,108),]
 str(df) # 206 prop com coord
 # retirar rows com ptos fora de bsb pelo ArqGIS
 
+### transformar p/.csv e depois .xls 
+write.csv2(df,file='DF_mrq_ArqGIS.csv',sep=';')
+
 
 ###################### ES ######################
 # quase ok
 # retirar rows com ptos no mar pelo ArqGIS
-
 es0 <- read.csv('ES.csv',header=T,sep=';') # 456 propriedades
 es <- es0[which(es0$LATITUDE_S..DECIMAL.!=""),]
 str(es0)
 names(es)[c(8,9)] <- c('lat','long')
 str(es) # 456 com coord
 
-es$lat <- as.character(es$lat);es$long <- as.character(es$long)
+require(stringr)
+es$lat  <- str_trim(es$lat);es$long  <- str_trim(es$long) # retirando espacos em branco antes e depois
 str(es)
 es$lat <- sub(',','.',es$lat);es$long <- sub(',','.',es$long)
 str(es)
-require(stringr)
-es$lat  <- str_trim(es$lat);es$long  <- str_trim(es$long) # retirando espacos em branco antes e depois
 es$lat;es$long
+
 ####### Ver que simbolos tem 
 q1 <- es$lat;q11 <- es$long
 head(q1);head(q11)
@@ -619,3 +598,6 @@ abs(dec[1])+dec[2]/60+dec[3]/3600
 es <- es[-418,]
 str(es) # 455 prop com coord
 # retirar rows com ptos no mar pelo ArqGIS
+
+### transformar p/.csv e depois .xls 
+write.csv2(es,file='ES_mrq_ArqGIS.csv',sep=';')
