@@ -1,11 +1,11 @@
 ###################### GO ######################
 # OK
 go0 <- read.csv('GO.csv',header=TRUE,sep=';') # 873 propriedades
-str(go0)
+str(go0) # 873 rows
 names(go0)[c(9,10)] <- c('lat','long')
 
 go <- go0[complete.cases(go0[,9:10]),] # outro jeito de tirar rows com NA
-str(go) # 739 com coord
+str(go) # 739 com coord # 739 prop com coords
 
 go$LAT <- NA;go$LONG <- NA # criar coluna pra arrumar coordenadas
 str(go)
@@ -56,6 +56,7 @@ for (i in 1:length(a2)){
 }
 go$long;go$LONG
 
+# colocando no lugar certo e trocando sinal
 is.numeric(go$lat);is.numeric(go$LAT);is.numeric(go$long);is.numeric(go$LONG)
 go$lat <- go$LAT*(-1);go$long <- go$LONG*(-1)
 go$lat;go$long
@@ -74,20 +75,24 @@ ggplot_build(w) # pra descobrir a linha removida: ponto go$long[67]
 go <- go[-67,]
 str(go) # 738 pop com coords
 
+### transformar p/.csv e depois .xls 
+write.csv2(go,file='GO_mrq.csv',sep=';')
+
+
 
 ###################### MA ######################
 # OK
 ma0 <- read.csv('MA.csv',header=T,sep=';') # 70 propriedades
+str(ma0) # 70 rows
 ma <- ma0[which(ma0$LATITUDE_S..DECIMAL.!=''),] # removendo linhas sem coordenadas - todas tem coordenadas
 names(ma)[c(11,12)] <- c('lat','long')
 str(ma) # 70 com coord
 
-ma$lat <- as.character(ma$lat); ma$long <- as.character(ma$long)
-str(ma)
-ma$lat <- sub(',','.',ma$lat);ma$long <- sub(',','.',ma$long)
-
 require(stringr)
 ma$lat  <- str_trim(ma$lat);ma$long  <- str_trim(ma$long) # retirando espacos em branco antes e depois
+str(ma)
+ma$lat <- sub(',','.',ma$lat);ma$long <- sub(',','.',ma$long)
+str(ma)
 
 ####### Ver que simbolos tem 
 q1 <- ma$lat;q11 <- ma$long
@@ -129,6 +134,7 @@ e <- gsub(u2[3],'T',e);ee <- gsub(u22[3],'T',ee)
 e <- gsub(u2[4],'T',e);ee <- gsub(u22[4],'T',ee)
 e <- gsub(u2[5],'T',e);ee <- gsub(u22[5],'T',ee)
 e <- gsub('º','T',e);ee <- gsub('º','T',ee)
+e;ee
 
 # separando pelo simbolo que coloquei
 e <- strsplit(e,'T+')
@@ -136,8 +142,9 @@ ee <- strsplit(ee,'T+')
 
 # antes pra ver se todas deram certo nomeia por 'LAT' ou 'LONG'
 ma$LAT <- convert(e);ma$LONG <- convert(ee) 
+is.numeric(ma$LAT);is.numeric(ma$LONG)
 str(ma)
-is.numeric(am$LAT);is.numeric(am$LONG)
+
 # ver linhas que tem NA  
 ma[!complete.cases(ma$LAT),] # ma$LAT[6]
 ma[!complete.cases(ma$LONG),] # nenhuma
@@ -158,21 +165,21 @@ ma$lat;ma$long
 library(ggmap)
 map_ma <- 'Maranhão'
 ma_map <- qmap(map_ma,zoom=6)
-w <- ma_map+geom_point(aes(x = long, y = lat , color = 'red'), 
+ma_map+geom_point(aes(x = long, y = lat , color = 'red'), 
                        data = ma)
 
-ggplot_build(w)
-
-# td certo, finalisar igual
+### transformar p/.csv e depois .xls 
+write.csv2(ma,file='MA_mrq.csv',sep=';')
 
 
 ###################### MG ######################
-# OK
+# quase ok, tirar ptos fora com ArqGIS
 mg0 <- read.csv('MG.csv',header=T,sep=';') # 2477 propriedades
+str(mg0) # 2477 rows
 mg <- mg0[which(mg0$LATITUDE_S..DECIMAL.!=''),] # todas as linhas tem coordenadas
-str(mg0)
+str(mg0) # 2477 prop com coords
 names(mg)[8:9] <- c('lat','long')
-str(mg) # 2477 com coord
+str(mg)
 mg$lat <- as.character(mg$lat);mg$long <- as.character(mg$long)
 mg$lat <- sub(',','.',mg$lat);mg$long <- sub(',','.',mg$long)
 str(mg$lat);str(mg$long)
@@ -213,23 +220,26 @@ mg[c(547,854,874,1238,1307,1347,1373,529,1303,1351,1357,2065),8:9]
 # tirar ptos fora
 mg <- mg[-c(547,854,874,1238,1307,1347,1373,529,1303,1351,1357,2065),]
 str(mg) # 2455 com coords
+# tirar ptos fora com ArqGIS
+
+### transformar p/.csv e depois .xls 
+write.csv2(mg,file='MG_mrq_ArqGIS.csv',sep=';')
 
 
 ###################### MS ######################
-# OK
+# quase ok, retirar ptos com ArqGIS
 ms0 <- read.csv('MS.csv',header=T,sep=';') # 658 propriedades
-
+str(ms0) # 658 rows
 ms <- ms0[which(ms0$LATITUDE_S..DECIMAL.!=''),] # removendo linhas sem coordenadas
+str(ms)
 ms <- ms[which(ms$LATITUDE_S..DECIMAL.!=0),] # 604 com coord
-str(ms0)
+str(ms) # 604 prop com coords
 names(ms)[c(11,12)] <- c('lat','long')
 str(ms)
 
-ms$lat <- as.character(ms$lat); ms$long <- as.character(ms$long)
+ms$lat  <- str_trim(ms$lat);ms$long  <- str_trim(ms$long) # retirando espacos em branco antes e depois
 str(ms)
 ms$lat <- sub(',','.',ms$lat);ms$long <- sub(',','.',ms$long)
-
-ms$lat  <- str_trim(ms$lat);ms$long  <- str_trim(ms$long) # retirando espacos em branco antes e depois
 str(ms)
 
 ####### Ver que simbolos tem 
@@ -272,10 +282,10 @@ e <- gsub(u2[3],'T',e);ee <- gsub(u22[3],'T',ee)
 e <- gsub(u2[4],'T',e);ee <- gsub(u22[4],'T',ee)
 e <- gsub(u2[5],'T',e);ee <- gsub(u22[5],'T',ee)
 ee <- gsub(u22[6],'T',ee)
+e;ee
 
 # separando pelo simbolo que coloquei
-e <- strsplit(e,'T+')
-ee <- strsplit(ee,'T+')
+e <- strsplit(e,'T+');ee <- strsplit(ee,'T+')
 
 # antes pra ver se todas deram certo nomeia por 'LAT' ou 'LONG'
 ms$LAT <- convert(e);ms$LONG <- convert(ee) 
@@ -310,7 +320,6 @@ e <- gsub(u2[3],'T',e)
 e <- gsub(u2[4],'T',e)
 e <- gsub('º','T',e)
 e <- strsplit(e,'T+')
-
 ms$LAT[c(169,363:487,593:597,599)] <- convert(e) 
 ms$LAT # ms$LAT[c(169,584)] ainda NA, mas 169 esta errado
 
@@ -413,7 +422,7 @@ str(ms) # 603 prop com coords
 
 
 ###### plotar mapa e pontos pra ver se algum caiu fora do DF
-install.packages('ggmap')
+#install.packages('ggmap')
 library(ggmap)
 map_ms <- 'Mato Grosso do Sul'
 ms_map <- qmap(map_ms,zoom=6)
@@ -428,13 +437,16 @@ ms[c(169,214,452,482,532:535,537:541,604),c('lat','long')]
 # retirar essas linhas
 ms <- ms[-c(214,452,482,537:541),]
 str(ms) # 595 prop com coords
+# tirar ptos fora com ArqGIS
+
+### transformar p/.csv e depois .xls 
+write.csv2(ms,file='MS_mrq_ArqGIS.csv',sep=';')
 
 
 ###################### MT ######################
-# quase ok
-# retirar rows com ptos no mar pelo ArqGIS
+# quase ok, retirar rows com ptos com ArqGIS
 mt0 <- read.csv('MT.csv',header=T,sep=';') # 2643 propriedades
-str(mt0)
+str(mt0) # 2643
 
 mt1 <- mt0[which(mt0$lat_dec!=''),] # tirando rows sem coords
 str(mt1) # 2342 prop
@@ -442,16 +454,11 @@ mt <- mt1[which(mt1$long_dec!=''),] # tirando rows sem coords
 str(mt) # 2241 prop com coords
 names(mt)[c(8,10)] <- c('lat','long')
 
-mt$lat <- as.character(mt$lat); mt$long <- as.character(mt$long)
+require(stringr)
+mt$lat  <- str_trim(mt$lat);mt$long  <- str_trim(mt$long) # retirando espacos em branco antes e depois
 str(mt)
 mt$lat <- sub(',','.',mt$lat);mt$long <- sub(',','.',mt$long)
 str(mt)
-
-
-#install.packages("stringr", dependencies=TRUE)
-require(stringr)
-mt$lat  <- str_trim(mt$lat);mt$long  <- str_trim(mt$long) # retirando espacos em branco antes e depois
-head(mt)
 
 ####### Ver que simbolos tem 
 q1 <- mt$lat;q11 <- mt$long
@@ -498,9 +505,9 @@ mt$LAT <- convert(e);mt$LONG <- convert(ee)
 is.numeric(mt$LAT);is.numeric(mt$LONG)
 mt$LAT;mt$LONG
 
-# trocando o sinal
-mt$LAT <- mt$LAT*(-1);mt$LONG <- mt$LONG*(-1)
-mt$LAT;mt$LONG
+# trocando o sinal e colocando no lugar certo
+mt$lat <- mt$LAT*(-1);mt$long <- mt$LONG*(-1)
+mt$lat;mt$long
 
 
 ###### plotar mapa e pontos pra ver se algum caiu fora do DF
@@ -515,21 +522,24 @@ ww <- ggplot_build(w)
 str(ww)
 ww$data[[4]][!complete.cases(ww$data[[4]][,c(2,3)]),c(2,3)] # 20 missing rows
 # NAs mt$long[c(3,7,262,538,539,588:591,650,701,963,1054,1055,1059,1832)] mt$LAT[c(979,1038)] [c(993,1574)]
-mt[c(3,7,262,538,539,588:591,650,701,963,1054,1055,1059,1832,979,1038,993, 1574),c('lat','long')]
+mt[c(3,7,262,538,539,588:591,650,701,963,1054,1055,1059,1832,979,1038,993,1574),c('lat','long')]
 # mt[c(3,7)] - Peru; mg[c(650,701)] - MG
 # mt[c(262,979,993)] - errado
 # mt[c(538,539,588:591,963,1054,1055,1059,1832,1038)] - mar
 # mt[1574,c('lat','long')] estão trocados
-mt$lat <- mt$LAT;mt$long <- mt$LONG
+##mt$lat <- mt$LAT;mt$long <- mt$LONG
 mt$lat;mt$long
-mt$lat[1574] <- mt$LONG[1574]
-mt$long[1574] <- mt$LAT[1574]
+mt$lat[1574] <- mt$LONG[1574]*(-1)
+mt$long[1574] <- mt$LAT[1574]*(-1)
 names(mt)
 
 # reitar essas 19 linhas mt[c(3,7,650,701,262,979,993,538,539,588:591,963,1054,1055,1059,1832,1038),]
-mt <- mt[-c(3,7,650,701,262,979,993,538,539,588:591,963,1054,1055,1059,1832,1038),] # 2222 c/coords
-str(mt)
+mt <- mt[-c(3,7,650,701,262,979,993,538,539,588:591,963,1054,1055,1059,1832,1038),] 
+str(mt) # 2222 prop com coords
 # falta tirar ptos em torno do MT no ArqGIS
+
+### transformar p/.csv e depois .xls 
+write.csv2(mt,file='MT_mrq_ArqGIS.csv',sep=';')
 
 
 
