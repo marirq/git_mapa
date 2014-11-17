@@ -77,6 +77,9 @@ rj[41,c('lat','long')] # arrumar -229.1891 -42.99214
 rj$lat[41] <- rj$lat[41]/10
 # tirar um pto fora no ArqGIS
 
+### transformar p/.csv e depois .xls 
+write.csv2(rj,file='RJ_mrq_ArqGIS.csv',sep=';')
+
 
 ###################### RN ######################
 # quase ok, falta tirar um pto fora no ArqGIS
@@ -158,6 +161,9 @@ rn_map <- qmap(map_rn,zoom=7)
 rn_map+geom_point(aes(x = long, y = lat , color = 'red'), 
                        data = rn)
 # tirar um pto fora no ArqGIS
+
+### transformar p/.csv e depois .xls 
+write.csv2(rn,file='RN_mrq_ArqGIS.csv',sep=';')
 
 
 ###################### RO ######################
@@ -244,6 +250,9 @@ ro[c(30,70,72,90),c('lat','long')]
 # tirar ptos errados
 ro <- ro[-c(30,70,72,90),]
 str(ro) # 135 prop com coords
+
+### transformar p/.csv e depois .xls 
+write.csv2(ro,file='RO_mrq.csv',sep=';')
 
 
 ###################### RS ######################
@@ -337,6 +346,8 @@ rs_map+geom_point(aes(x = long, y = lat , color = 'red'),
                        data = rs)
 # tirar uns ptos fora com o ArqGIIS
 
+### transformar p/.csv e depois .xls 
+write.csv2(rs,file='RS_mrq_ArqGIS.csv',sep=';')
 
 
 
