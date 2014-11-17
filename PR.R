@@ -44,12 +44,35 @@ q44 <- grep('[^[:alnum:]]', q33, value = T) # pega os simbolos
 
 u1 <- unique(q4) # tiro os repetidos, pra ver quais simbolos tenho de um jeito + limpo
 u11 <- unique(q44) # tiro os repetidos, pra ver quais simbolos tenho de um jeito + limpo
-# testando tirar espacos FAZER NO LEB!!!
+
 # tirar os espacos
-e <- gsub(u1[1],'T',pr$lat[7485:7495]);ee <- gsub(u11[1],'T',pr$long[7485:7495])
+e <- gsub(u1[1],'T',pr$lat[7485:7495])
+e <- strsplit(e,'T')
+unlist(e[[c(1:length(n))]][2])
+as.data.frame(unlist(e))
+names(e)
+str(e)
+colnames(e) <- e[1,]
+length(e)
+e <- e[2:nrow(e),]
+e[10]
+
+n <- pr$lat[7485:7495]
+str(e)
+
+;ee <- gsub(u11[1],'T',pr$long[7485:7495])
 e;ee
-e <- 
-  
+
+;ee <- strsplit(ee,'T')
+e;ee
+e[7:11]
+
+
+
+
+f <- dec.pr(e);ff <- dec.pr(ee)
+f;ff
+
 # dados sem ponto, transformar pra decimal
 a <- nchar(pr$lat) # vendo quantos digitos tem em cada
 unique(a) # para isolar os repetidos e saber qtos caracteres tem cada
