@@ -1,8 +1,9 @@
 ###################### PA ######################
 # OK
 pa0 <- read.csv('PA.csv',header=T,sep=';') 
+str(pa0) # 306 rows
 pa <- pa0[which(pa0$LATITUDE_S..DECIMAL.!=''),] # eliminando rows sem coords
-str(pa)
+str(pa) # 303 prop com coords
 
 names(pa)[c(12,13)] <- c('lat','long')
 str(pa)
@@ -10,9 +11,6 @@ str(pa)
 require(stringr)
 pa$lat  <- str_trim(pa$lat);pa$long  <- str_trim(pa$long) # retirando espacos em branco antes e depois
 head(pa)
-
-pa$lat <- as.character(pa$lat);pa$long <- as.character(pa$long)
-str(pa)
 
 pa$lat <- sub(',','.',pa$lat);pa$long <- sub(',','.',pa$long)
 str(pa)
@@ -124,9 +122,11 @@ pa$lat;pa$long
 library(ggmap)
 map_pa <- 'State of Pará'
 pa_map <- qmap(map_pa,zoom=5)
-w <- pa_map+geom_point(aes(x = long, y = lat , color = 'red'), 
+pa_map+geom_point(aes(x = long, y = lat , color = 'red'), 
                        data = pa)
 
+### transformar p/.csv e depois .xls 
+write.csv2(pa,file='PA_mrq.csv',sep=';')
 
 
 ###################### PB ######################
@@ -142,9 +142,6 @@ str(pb)
 require(stringr)
 pb$lat  <- str_trim(pb$lat);pb$long  <- str_trim(pb$long) # retirando espacos em branco antes e depois
 head(pb)
-
-pb$lat <- as.character(pb$lat);pb$long <- as.character(pb$long)
-str(pb)
 
 pb$lat <- sub(',','.',pb$lat);pb$long <- sub(',','.',pb$long)
 str(pb)
@@ -220,6 +217,9 @@ pb <- pb[-483,]
 str(pb) # 569 prop com coords
 # precisa tirar uns ptos com ArqGIS
 
+### transformar p/.csv e depois .xls 
+write.csv2(pb,file='PB_mrq_ArqGIS.csv',sep=';')
+
 
 ###################### PE ######################
 # quase ok, falta eliminar ptos fora pelo ArqGIS
@@ -234,9 +234,6 @@ str(pe)
 require(stringr)
 pe$lat  <- str_trim(pe$lat);pe$long  <- str_trim(pe$long) # retirando espacos em branco antes e depois
 head(pe)
-
-pe$lat <- as.character(pe$lat);pe$long <- as.character(pe$long)
-str(pe)
 
 pe$lat <- sub(',','.',pe$lat);pe$long <- sub(',','.',pe$long)
 str(pe)
@@ -392,6 +389,9 @@ pe <- pe[-c(270,342,654,686,702,706,1156,1240,738,842,24,52,683),]
 str(pe) # 1241 prop com coords
 # eliminar ptos fora pelo ArqGIS
 
+### transformar p/.csv e depois .xls 
+write.csv2(pe,file='PE_mrq_ArqGIS.csv',sep=';')
+
 
 ###################### PI ######################
 # quase ok, falta eliminar pontos fora no ArqGIS
@@ -542,6 +542,9 @@ pi[74,c('lat','long')] # mar, tirar
 pi <- pi[-74,]
 str(pi) # 113 prop c/coords
 # eliminar pontos fora no ArqGIS
+
+### transformar p/.csv e depois .xls 
+write.csv2(pi,file='PI_mrq_ArqGIS.csv',sep=';')
 
 
 # funcao pra converter em coordenada decimal
