@@ -157,17 +157,15 @@ write.csv2(sp,file='SP_mrq_ArqGIS.csv',sep=';')
 #
 to0 <- read.csv2('TO.csv',header=T,sep=';')
 str(to0) # 104 rows
-to <- to0[which(to0$LATITUDE_S..DECIMAL.!=''),] # eliminando rows sem coords
+to <- to0[which(to0$LATITUDE_S..DECIMAL.!=''),]
 str(to)
 
-# unindo as caselas pra coords e spliting
 to$lat <- paste(to$LATITUDE_S..DECIMAL.,to$X,to$X.1)
 to$long <- paste(to$LONGITUDE_W..DECIMAL.,to$X.2,to$X.3)
 to$lat;to$long
 to$LAT <- strsplit(to$lat,' ');to$LONG <- strsplit(to$long,' ')
 to$LAT;to$LONG
 
-# funcao pra converter em coordenada decimal 
 convert<-function(coord){
   for (i in 1:length(coord)){
     dec=c(as.numeric(coord[[i]][1]),as.numeric(coord[[i]][2]),as.numeric(coord[[i]][3]))
@@ -176,29 +174,22 @@ convert<-function(coord){
   return((as.numeric(coord)))
 }
 
-# converter coords
-e <- convert(to$LAT);ee <- convert(to$LONG)
-e;ee
-
-# trocar sinal e colocar na col certa
-to$lat <- e*(-1);to$long <- ee*(-1)
+to$LAT <- convert(to$LAT);to$LONG <- convert(to$LONG)
+to$LAT;to$LONG
+to$lat <- to$LAT*(-1);to$long <- to$LONG*(-1)
 to$lat;to$long
+str(to)
 
-str(to) # 104 prop com coords
-to5 <- to[,-c(17,18)] # tirando as listas, fica melhor pra ver str
-str(to5)
-
-###### plotar mapa e pontos pra ver se algum caiu fora
-#install.packages('ggmap')
 library(ggmap)
 map_to <- 'State of Tocantins'
 to_map <- qmap(map_to,zoom=6)
 w <- to_map+geom_point(aes(x = long, y = lat , color = 'red'), 
                        data = to)
 
-ggplot_build(w) # 4 missing rows - [c(16,47,48,88)]
+ggplot_build(w)
 to[c(16,47,48,88),c('lat','long')]
 # [16,48] - SP; [47] - mar; [88] - AM
-# FALTA FAZER ISSO
-### transformar p/.csv e depois .xls 
-write.csv2(pi,file='PI_mrq_ArqGIS.csv',sep=';')
+to <- to[-c(16,47,48,88),]
+
+ 
+write.csv2(to,file='TO_mrq_ArqGIS.csv',sep=';')
