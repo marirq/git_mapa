@@ -1,108 +1,106 @@
 ###################### SC ######################
-#
 sc0 <- read.csv('SC.csv',header=T,sep=';') 
-str(sc0) # 9271 rows
-sc <- sc0[which(sc0$LATITUDE_S!=''),] # eliminando rows sem coords
-str(sc) # 9271 prop com coords
-
+sc <- sc0[which(sc0$LATITUDE_S!=''),]
 names(sc)[c(9,10)] <- c('lat','long')
+str(sc) # 9271 prop com coords
+rows0 <- grep('^0.',sc$lat)
+sc[rows0,c('lat','long')]
+sc <- sc[-rows0,]
 str(sc)
 
 require(stringr)
-sc$lat  <- str_trim(sc$lat);sc$long  <- str_trim(sc$long) # retirando espacos em branco antes e depois
-head(sc)
-
+sc$lat  <- str_trim(sc$lat);sc$long  <- str_trim(sc$long)
 sc$lat <- sub(',','.',sc$lat);sc$long <- sub(',','.',sc$long)
 str(sc)
 
-####### Ver que simbolos tem 
 q1 <- sc$lat;q11 <- sc$long
 head(q1);head(q11)
 
-q2 <- q1[1] # o primeiro linha da coluna  q escolhi
-for (i in 2:length(q1)) { # do segundo da coluna (pq o primeiro ja pequei) ate o comprimento da coluna
-  q2 <- paste0(q2, q1[i]) # juntando todas as linhas
+q2 <- q1[1]
+for (i in 2:length(q1)) {
+  q2 <- paste0(q2, q1[i])
 }
-q22 <- q11[1] # o primeiro linha da coluna  q escolhi
-for (i in 2:length(q11)) { # do segundo da coluna (pq o primeiro ja pequei) ate o comprimento da coluna
-  q22 <- paste0(q22, q11[i]) # juntando todas as linhas
+q22 <- q11[1]
+for (i in 2:length(q11)) {
+  q22 <- paste0(q22, q11[i])
 }
 
-q3 <- NA # crio um vetor vazio
-for (i in 1:nchar(q2)) { # faco um for de 1 ate o numero de caracteres do meu vetor em conjunto
-  q3 <- c(q3, substr(q2, i, i)) #  junto o q3 (que é NA no início)mais o q2 sendo que eu substituo o carcter 1 no primeiro lugar, depois o 2 no segundo e sucessivamente
+q3 <- NA
+for (i in 1:nchar(q2)) {
+  q3 <- c(q3, substr(q2, i, i))
 }
-q3 <- q3[-1] # tiro o primeiro elemento que era NA
-q33 <- NA # crio um vetor vazio
-for (i in 1:nchar(q22)) { # faco um for de 1 ate o numero de caracteres do meu vetor em conjunto
-  q33 <- c(q33, substr(q22, i, i)) #  junto o q3 (que é NA no início)mais o q2 sendo que eu substituo o carcter 1 no primeiro lugar, depois o 2 no segundo e sucessivamente
+q3 <- q3[-1]
+q33 <- NA
+for (i in 1:nchar(q22)) {
+  q33 <- c(q33, substr(q22, i, i))
 }
-q33 <- q33[-1] # tiro o primeiro elemento que era NA
+q33 <- q33[-1]
 
-q4 <- grep('[^[:alnum:]]', q3, value = T) # pega os simbolos
-q44 <- grep('[^[:alnum:]]', q33, value = T) # pega os simbolos
+q4 <- grep('[^[:alnum:]]', q3, value = T)
+q44 <- grep('[^[:alnum:]]', q33, value = T)
 
-u1 <- unique(q4) # tiro os repetidos, pra ver quais simbolos tenho de um jeito + limpo
-u11 <- unique(q44) # tiro os repetidos, pra ver quais simbolos tenho de um jeito + limpo
+u1 <- unique(q4)
+u11 <- unique(q44)
 
 str(sc)
-b <- grep('^0.',sc$lat)
-sc <- sc[-b,] # tirar as linhas com valor 0
-str(sc) # 9250 prop com coords
+Nchar.lat <- nchar(sc$lat)
+unique(Nchar.lat)
+sc[which(nchar(sc$lat)==8),c('lat','long')]
+Nchar9 <- rownames(sc[which(nchar(sc$lat)==9),])
+sc[which(nchar(sc$lat)==10),c('lat','long')]
 
-####### Ver, novamente, que simbolos tem 
-q1 <- sc$lat;q11 <- sc$long
-head(q1);head(q11)
+coords9 <- as.numeric(sc[Nchar9,'lat'])
+sc[Nchar9,'LAT'] <- coords9/1000000
+str(sc)
 
-q2 <- q1[1] # o primeiro linha da coluna  q escolhi
-for (i in 2:length(q1)) { # do segundo da coluna (pq o primeiro ja pequei) ate o comprimento da coluna
-  q2 <- paste0(q2, q1[i]) # juntando todas as linhas
-}
-q22 <- q11[1] # o primeiro linha da coluna  q escolhi
-for (i in 2:length(q11)) { # do segundo da coluna (pq o primeiro ja pequei) ate o comprimento da coluna
-  q22 <- paste0(q22, q11[i]) # juntando todas as linhas
-}
+Nchar.long <- nchar(sc$long)
+unique(Nchar.long)
+sc[which(nchar(sc$long)==8),c('lat','long')]
+Nchar9.9 <- rownames(sc[which(nchar(sc$long)==9),])
+sc[which(nchar(sc$long)==10),c('lat','long')]
 
-q3 <- NA # crio um vetor vazio
-for (i in 1:nchar(q2)) { # faco um for de 1 ate o numero de caracteres do meu vetor em conjunto
-  q3 <- c(q3, substr(q2, i, i)) #  junto o q3 (que é NA no início)mais o q2 sendo que eu substituo o carcter 1 no primeiro lugar, depois o 2 no segundo e sucessivamente
-}
-q3 <- q3[-1] # tiro o primeiro elemento que era NA
-q33 <- NA # crio um vetor vazio
-for (i in 1:nchar(q22)) { # faco um for de 1 ate o numero de caracteres do meu vetor em conjunto
-  q33 <- c(q33, substr(q22, i, i)) #  junto o q3 (que é NA no início)mais o q2 sendo que eu substituo o carcter 1 no primeiro lugar, depois o 2 no segundo e sucessivamente
-}
-q33 <- q33[-1] # tiro o primeiro elemento que era NA
+coords9.9 <- as.numeric(sc[Nchar9.9,'long'])
+sc[Nchar9.9,'LONG'] <- coords9.9/1000000
 
-q4 <- grep('[^[:alnum:]]', q3, value = T) # pega os simbolos
-q44 <- grep('[^[:alnum:]]', q33, value = T) # pega os simbolos
+sc$LAT
+Nrow8.pLAT <- row.names(sc[which(nchar(sc$lat)==8),])
+sc[Nrow8.pLAT,'LAT'] <- as.numeric(sc[Nrow8.pLAT,'lat'])
+Nrow10.pLAT <- row.names(sc[which(nchar(sc$lat)==10),])
+sc[Nrow10.pLAT,'LAT'] <- as.numeric(sc[Nrow10.pLAT,'lat'])
 
-u1 <- unique(q4) # tiro os repetidos, pra ver quais simbolos tenho de um jeito + limpo
-u11 <- unique(q44) # tiro os repetidos, pra ver quais simbolos tenho de um jeito + limpo
+sc$LONG
+Nrow8.pLONG <- row.names(sc[which(nchar(sc$long)==8),])
+sc[Nrow8.pLONG,'LONG'] <- as.numeric(sc[Nrow8.pLONG,'long'])
+Nrow10.pLONG <- row.names(sc[which(nchar(sc$long)==10),])
+sc[Nrow10.pLONG,'LONG'] <- as.numeric(sc[Nrow10.pLONG,'long'])
 
-# pra nao mexer nos que ja estao em decimal
-a <- str_length(sc$lat)
-unique(a)
-row.names(sc[str_length(sc$lat)==c(8,10),c('lat','long')])
-scy <- sc[-c(2642,2660,4329,4796,4820,4824,4838,4844,4852,4863,5236,7637,7645,7651,8556,8567,8573),] # tirando os certos
-str(scy)
-scy$lat
+str(sc)
+#sc$lat <- as.numeric(sc$LAT);sc$long <- as.numeric(sc$LONG)
+#str(sc)
 
-a <- str_length(scy$lat)
-unique(a)
-scy[str_length(scy$lat)==8,c('lat','long')]
-row.names(scy[str_length(scy$lat)==8,c('lat','long')])
-scy[str_length(scy$lat)==10,c('lat','long')]
-row.names(scy[str_length(scy$lat)==10,c('lat','long')])
-c(2533,2659,4329,4776,4783,4796,4797,4813,4820,4824,4825,4838,4844,4859,4863,4870,5236,6262,7634,7637,7638,7645,7646,76518461,8556,8566,8567,8573,8576)
-scz <- scy["[^[c('2533','2659','4329','4776','4783','4796','4797','4813','4820','4824','4825','4838','4844','4859','4863','4870',
-             '5236','6262','7634','7637','7638','7645','7646','7651','8461','8556','8566','8567','8573','8576']]"),]
-nrow(scy[c('2533','2659','4329','4776','4783','4796','4797','4813','4820','4824','4825','4838','4844','4859','4863','4870',
-      '5236','6262','7634','7637','7638','7645','7646','7651','8461','8556','8566','8567','8573','8576'),])
+library(ggmap)
+map_sc <- 'State of Santa Catarina'
+sc_map <- qmap(map_sc,zoom=6)
+w <- sc_map+geom_point(aes(x = LONG, y = LAT , color = 'red'), 
+                       data = sc)
+ww <- ggplot_build(w) # 23 missing rows
+miss.rows <- as.numeric(row.names(ww$data[[4]][!complete.cases(ww$data[[4]][,c(2,3)]),c(2,3)]))
+sc[miss.rows,c('lat','long','LAT','LONG')]
+sc[miss.rows,c('LAT','LONG')]
+mrLat <- miss.rows[c(1,3,4,6,7,9,10,11,12,13,15,16,17,18,19,20,21,22)] # subst lat p/ LAT
+sc[mrLat,'LAT'] <- as.numeric(sc[mrLat,'lat'])
+mrLong <- miss.rows[c(1,5,8,10,12,13,14,15,16,17,19,20,21,22,23)] # subst long p/LONG
+sc[mrLong,'LONG'] <- as.numeric(sc[mrLong,'long'])
 
-yx <- scy[which(row.names(scy)=='2533'&'2659'&'4329'),c('lat','long')]
+mrLatLong <- miss.rows[c(2)] # dividir antes e depoi passar p/LAT e LONG
+sc[mrLatLong,c('LAT','LONG')] # as.numeric(sc$lat[mrLatLong])/1000000
 
+str(sc)
+sc$lat <- sc$LAT;sc$long <- sc$LONG
+map_sc <- 'State of Santa Catarina'
+sc_map <- qmap(map_sc,zoom=6)
+sc_map+geom_point(aes(x = LONG, y = lat , color = 'red'), 
+                       data = sc)
 
-# dados sem ponto, transformar pra decimal
-a <- str_length(sc$lat) # vendo quantos digitos tem em cada
-unique(a) # para isolar os repetidos e saber qtos caracteres tem cada, tem NAs
+write.csv2(sc,file='SC_mrq_ArqGIS.csv',sep=';')
+sc[865,c('lat','long')]
