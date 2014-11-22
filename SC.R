@@ -73,10 +73,8 @@ Nrow8.pLONG <- row.names(sc[which(nchar(sc$long)==8),])
 sc[Nrow8.pLONG,'LONG'] <- as.numeric(sc[Nrow8.pLONG,'long'])
 Nrow10.pLONG <- row.names(sc[which(nchar(sc$long)==10),])
 sc[Nrow10.pLONG,'LONG'] <- as.numeric(sc[Nrow10.pLONG,'long'])
-
 str(sc)
-#sc$lat <- as.numeric(sc$LAT);sc$long <- as.numeric(sc$LONG)
-#str(sc)
+
 
 library(ggmap)
 map_sc <- 'State of Santa Catarina'
