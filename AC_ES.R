@@ -1,98 +1,75 @@
 ################### AC ################### 
-# OK
-ac0 <- read.csv('AC.csv', header=TRUE, sep=';') # 8282 propriedades
-str(ac0)
-names(ac0)[c(11,12)] <- c('lat','long')
-ac <- ac0[which(ac0$lat!=''),] # todas as linhas tem coordenadas
-str(ac) # 8282 com coord
-names(ac)
-ac$lat <- as.character(ac$lat); ac$long <- as.character(ac$long)
+ac <- read.csv('AC.csv', header=TRUE, sep=';') # 8282 propriedades
 str(ac)
-ac$lat <- sub(',','.',ac$lat); ac$long <- sub(',','.',ac$long)
-str(ac)
-ac$lat <- as.numeric(ac$lat); ac$long <- as.numeric(ac$long)
-str(ac)
+names(ac)[c(11,12)] <- c('lat','long')
+ac.coord <- ac[which(ac$lat!=''),] # todas as linhas tem coordenadas
+ac.coord$lat <- as.numeric(sub(',','.',ac.coord$lat)); ac.coord$long <- as.numeric(sub(',','.',ac.coord$long))
+str(ac.coord)
 
-grep('º',ac$lat,value=TRUE) # vendo se esta em decimal
-
-
-###### plotar mapa e pontos pra ver se algum caiu fora do AM
-#install.packages('ggmap')
 library(ggmap)
-str(ac)
-# mapa
-map_ac <- 'State of Acre'
-ac_map <- qmap(map_ac,zoom=6)
+ac_map <- qmap('State of Acre',zoom=6)
 ac_map+geom_point(aes(x = long, y = lat, color = 'red' ), 
-                  data = ac)
+                  data = ac.coord)
 
-### transformar p/.csv e depois .xls 
-write.csv2(ac,file='AC_mrq.csv',sep=';')
-
+write.csv2(ac.coord,file='AC_mrq.csv')
 
 ###################### AM ######################
-# OK
-am0 <- read.csv('AM.csv',header=TRUE,sep=';') # 64 propriedades
-names(am0)[c(11,12)] <- c('lat','long')
-str(am0)
+am <- read.csv('AM.csv',header=TRUE,sep=';') # 64 propriedades
+names(am)[c(11,12)] <- c('lat','long')
+str(am)
 
-am <- am0[which(am0$lat!=''),] # removendo linhas sem coordenadas
-str(am) # 57 com coord
+am.coord <- am[which(am$lat!=''),]
+am.coord <- am.coord[complete.cases(am.coord$lat),]
+str(am.coord)
 
-#install.packages("stringr", dependencies=TRUE)
 require(stringr)
-am$lat  <- str_trim(am$lat);am$long  <- str_trim(am$long) # retirando espacos em branco antes e depois
-str(am)
-am$lat <- sub(',','.',am$lat);am$long <- sub(',','.',am$long)
-str(am)
+am.coord$lat  <- str_trim(sub(',','.',am.coord$lat));am.coord$long  <- str_trim(sub(',','.',am.coord$long))
+str(am.coord)
 
-####### Ver que simbolos tem 
-q1 <- am$lat;q11 <- am$long
-head(q1);head(q11)
 
-q2 <- q1[1] # o primeiro linha da coluna  q escolhi
-for (i in 2:length(q1)) { # do segundo da coluna (pq o primeiro ja pequei) ate o comprimento da coluna
-  q2 <- paste0(q2, q1[i]) # juntando todas as linhas
+simb_lat <- am.coord$lat;simb_long <- am.coord$long
+head(simb_lat);head(simb_long)
+
+simb_lat2 <- simb_lat[1]
+for (i in 2:length(simb_lat)) {
+  simb_lat2 <- paste0(simb_lat2, simb_lat[i])
 }
-q22 <- q11[1] # o primeiro linha da coluna  q escolhi
-for (i in 2:length(q11)) { # do segundo da coluna (pq o primeiro ja pequei) ate o comprimento da coluna
-  q22 <- paste0(q22, q11[i]) # juntando todas as linhas
+simb_long2 <- simb_long[1]
+for (i in 2:length(simb_long)) {
+  simb_long2 <- paste0(simb_long2, simb_long[i])
 }
 
-q3 <- NA # crio um vetor vazio
-for (i in 1:nchar(q2)) { # faco um for de 1 ate o numero de caracteres do meu vetor em conjunto
-  q3 <- c(q3, substr(q2, i, i)) #  junto o q3 (que é NA no início)mais o q2 sendo que eu substituo o carcter 1 no primeiro lugar, depois o 2 no segundo e sucessivamente
+simb_lat3 <- NA
+for (i in 1:nchar(simb_lat2)) {
+  simb_lat3 <- c(simb_lat3, substr(simb_lat2, i, i))
 }
-q3 <- q3[-1] # tiro o primeiro elemento que era NA
-q33 <- NA # crio um vetor vazio
-for (i in 1:nchar(q22)) { # faco um for de 1 ate o numero de caracteres do meu vetor em conjunto
-  q33 <- c(q33, substr(q22, i, i)) #  junto o q3 (que é NA no início)mais o q2 sendo que eu substituo o carcter 1 no primeiro lugar, depois o 2 no segundo e sucessivamente
+simb_lat3 <- simb_lat3[-1]
+simb_long3 <- NA
+for (i in 1:nchar(simb_long2)) {
+  simb_long3 <- c(simb_long3, substr(simb_long2, i, i))
 }
-q33 <- q33[-1] # tiro o primeiro elemento que era NA
+simb_long3 <- simb_long3[-1]
 
-q4 <- grep('[^[:alnum:]]', q3, value = T) # pega os simbolos
-q44 <- grep('[^[:alnum:]]', q33, value = T) # pega os simbolos
+simb_lat4 <- grep('[^[:alnum:]]', simb_lat3, value = T)
+simb_long4 <- grep('[^[:alnum:]]', simb_long3, value = T)
 
-u1 <- unique(q4) # tiro os repetidos, pra ver quais simbolos tenho de um jeito + limpo
-u11 <- unique(q44) # tiro os repetidos, pra ver quais simbolos tenho de um jeito + limpo
+u_lat <- unique(simb_lat4)
+u_long <- unique(simb_long4)
 
-u2 <- u1[-2] # tirando o simbolo de ponto
-u22 <- u11[-2] # tirando o simbolo de ponto
+u_lat2 <- u_lat[-2]
+u_long2 <- u_long[-2]
 
-# tenho que tirar um de cada vez
-e <- gsub(u2[1],'T',am$lat);ee <- gsub(u22[1],'T',am$long)
-e <- gsub(u2[2],'T',e);ee <- gsub(u22[2],'T',ee)
-e <- gsub(u2[3],'T',e);ee <- gsub(u22[3],'T',ee)
-e <- gsub(u2[4],'T',e);ee <- gsub(u22[4],'T',ee)
-e <- gsub(u2[5],'T',e);ee <- gsub(u22[5],'T',ee)
-e <- gsub(u2[6],'T',e);ee <- gsub(u22[6],'T',ee)
+e <- gsub(u_lat2[1],'T',am.coord$lat);ee <- gsub(u_long2[1],'T',am.coord$long)
+e <- gsub(u_lat2[2],'T',e);ee <- gsub(u_long2[2],'T',ee)
+e <- gsub(u_lat2[3],'T',e);ee <- gsub(u_long2[3],'T',ee)
+e <- gsub(u_lat2[4],'T',e);ee <- gsub(u_long2[4],'T',ee)
+e <- gsub(u_lat2[5],'T',e);ee <- gsub(u_long2[5],'T',ee)
+#e <- gsub(u_lat2[6],'T',e);
+ee <- gsub(u_long2[6],'T',ee)
 e;ee
 
-# separando pelo simbolo que coloquei
-e <- strsplit(e,'T+')
-ee <- strsplit(ee,'T+')
+e <- strsplit(e,'T+');ee <- strsplit(ee,'T+')
 
-# funcao pra converter em coordenada decimal
 convert<-function(coord){
   for (i in 1:length(coord)){
     dec=c(as.numeric(coord[[i]][1]),as.numeric(coord[[i]][2]),as.numeric(coord[[i]][3]))
@@ -101,231 +78,121 @@ convert<-function(coord){
   return((as.numeric(coord)))
 }
 
-# antes pra ver se todas deram certo nomeia por 'LAT' ou 'LONG'
-am$LAT <- convert(e);am$LONG <- convert(ee) 
-is.numeric(am$LAT);is.numeric(am$LONG)
-am$LAT;am$LONG
+am.coord$LAT <- convert(e);am.coord$LONG <- convert(ee) 
+is.numeric(am.coord$LAT);is.numeric(am.coord$LONG)
+am.coord$LAT;am.coord$LONG
 
-# precisa arrumar o am$LAT[22] refazer a partir do 'e' ou 'ee' 
-y <- gsub(u2[1],'T',am$lat[22])
-y <- gsub(u2[2],'T',y)
-y <- gsub(u2[3],'T',y)
-y <- gsub(u2[4],'T',y)
-y <- gsub(u2[5],'T',y)
-y <- gsub(u2[6],'T',y)
+y <- gsub(u_lat2[1],'T',am.coord$lat[c(22,26)])
+y <- gsub(u_lat2[2],'T',y)
+y <- gsub(u_lat2[3],'T',y)
+y <- gsub(u_lat2[4],'T',y)
+y <- gsub(u_lat2[5],'T',y)
 y <- strsplit(y,'T+')
 
-dec=c(as.numeric(y[[1]][1]),as.numeric(y[[1]][2]))#,as.numeric(e[[1]][3]))
-am$LAT[22] <- abs(dec[1])+dec[2]/60+0/3600
-am$LAT;am$LONG
+dec1=c(as.numeric(y[[1]][1]),as.numeric(y[[1]][2]))
+dec2=c(as.numeric(y[[2]][1]),as.numeric(y[[2]][2]))
+am.coord$LAT[22] <- abs(dec1[1])+dec1[2]/60+0/3600
+am.coord$LAT[26] <- abs(dec2[1])+dec2[2]/60+0/3600
+am.coord$LAT;am.coord$LONG
 
-# colocar os valores na coluna certa
-am$lat <- am$LAT;am$long <- am$LONG
-am$lat;am$long
+am.coord$lat <- am.coord$LAT*(-1);am.coord$long <- am.coord$LONG*(-1)
+am.coord$lat;am.coord$long
 
-# mudar o sinal
-str(am)
-am$lat <- (am$lat)*(-1);am$long <- (am$long)*(-1)
-am$lat;am$long
-
-###### plotar mapa e pontos pra ver se algum caiu fora do AM
-#install.packages('ggmap')
 library(ggmap)
-map_am <- 'Amazonas'
-am_map <- qmap(map_am,zoom=5)
-am_map+geom_point(aes(x = long, y = lat , color = 'red'), 
-                  data = am)
+qmap('Amazonas',zoom=5)+geom_point(aes(x = long, y = lat , color = 'red'), 
+                  data = am.coord)
 
-#install.packages("stringr", dependencies=TRUE)
-require(stringr)
-am$lat  <- str_trim(am$lat);am$long  <- str_trim(am$long) # retirando espacos em branco antes e depois
-
-### transformar p/.csv e depois .xls 
-write.csv2(am,file='AM_mrq.csv',sep=';')
+write.csv2(am.coord,file='AM_mrq.csv')
 
 
 ###################### BA ######################
-# OK 
-ba0 <- read.csv('BA.csv',header=TRUE,sep=';') # 509 propriedades
-names(ba0)[c(8,9)] <- c('lat','long')
-
-# removendo linhas sem coordenada
-str(ba0)
-levels(ba0$lat)
-ba <- ba0[which(ba0$lat!="Não informado"),]
-ba <- ba[which(ba$lat!=""),]
-str(ba) # 422 com coord
+ba <- read.csv('BA.csv',header=TRUE,sep=';') # 509 propriedades
+str(ba)
+levels(ba$lat)
+ba.coord <- ba[which(ba$lat!="Não informado"),]
+ba.coord <- ba.coord[which(ba.coord$lat!=""),]
+str(ba.coord) # 422 com coord
 
 require(stringr)
-ba$lat  <- str_trim(ba$lat);ba$long  <- str_trim(ba$long) # retirando espacos em branco antes e depois
-str(ba)
+ba.coord$lat  <- str_trim(sub(',','.',ba.coord$lat));ba.coord$long  <- str_trim(sub(',','.',ba.coord$long))
+str(ba.coord)
 
-ba$lat <- sub(',','.',ba$lat);ba$long <- sub(',','.',ba$long)
-str(ba)
+simb_lat <- ba.coord$lat;simb_long <- ba.coord$long
+head(simb_lat);head(simb_long)
 
-####### Ver que simbolos tem 
-q1 <- ba$lat;q11 <- ba$long
-head(q1);head(q11)
-
-q2 <- q1[1] # o primeiro linha da coluna  q escolhi
-for (i in 2:length(q1)) { # do segundo da coluna (pq o primeiro ja pequei) ate o comprimento da coluna
-  q2 <- paste0(q2, q1[i]) # juntando todas as linhas
+simb_lat2 <- simb_lat[1]
+for (i in 2:length(simb_lat)) {
+  simb_lat2 <- paste0(simb_lat2, simb_lat[i])
 }
-q22 <- q11[1] # o primeiro linha da coluna  q escolhi
-for (i in 2:length(q11)) { # do segundo da coluna (pq o primeiro ja pequei) ate o comprimento da coluna
-  q22 <- paste0(q22, q11[i]) # juntando todas as linhas
+simb_long2 <- simb_long[1]
+for (i in 2:length(simb_long)) {
+  simb_long2 <- paste0(simb_long2, simb_long[i])
 }
 
-q3 <- NA # crio um vetor vazio
-for (i in 1:nchar(q2)) { # faco um for de 1 ate o numero de caracteres do meu vetor em conjunto
-  q3 <- c(q3, substr(q2, i, i)) #  junto o q3 (que é NA no início)mais o q2 sendo que eu substituo o carcter 1 no primeiro lugar, depois o 2 no segundo e sucessivamente
+simb_lat3 <- NA
+for (i in 1:nchar(simb_lat2)) {
+  simb_lat3 <- c(simb_lat3, substr(simb_lat2, i, i))
 }
-q3 <- q3[-1] # tiro o primeiro elemento que era NA
-q33 <- NA # crio um vetor vazio
-for (i in 1:nchar(q22)) { # faco um for de 1 ate o numero de caracteres do meu vetor em conjunto
-  q33 <- c(q33, substr(q22, i, i)) #  junto o q3 (que é NA no início)mais o q2 sendo que eu substituo o carcter 1 no primeiro lugar, depois o 2 no segundo e sucessivamente
+simb_lat3 <- simb_lat3[-1]
+simb_long3 <- NA
+for (i in 1:nchar(simb_long2)) {
+  simb_long3 <- c(simb_long3, substr(simb_long2, i, i))
 }
-q33 <- q33[-1] # tiro o primeiro elemento que era NA
+simb_long3 <- simb_long3[-1]
 
-q4 <- grep('[^[:alnum:]]', q3, value = T) # pega os simbolos
-q44 <- grep('[^[:alnum:]]', q33, value = T) # pega os simbolos
+simb_lat4 <- grep('[^[:alnum:]]', simb_lat3, value = T)
+simb_long4 <- grep('[^[:alnum:]]', simb_long3, value = T)
 
-u1 <- unique(q4) # tiro os repetidos, pra ver quais simbolos tenho de um jeito + limpo
-u11 <- unique(q44) # tiro os repetidos, pra ver quais simbolos tenho de um jeito + limpo
+u_lat <- unique(simb_lat4)
+u_long <- unique(simb_long4)
 
-u2 <- u1[-3] # tirando o simbolo de ponto
-u22 <- u11[-3] # tirando o simbolo de ponto
+u_lat2 <- u_lat[-3]
+u_long2 <- u_long[-3]
 
-# tenho que tirar um de cada vez
-e <- gsub(u2[1],'T',ba$lat);ee <- gsub(u22[1],'T',ba$long)
-e <- gsub(u2[2],'T',e);ee <- gsub(u22[2],'T',ee)
-e <- gsub(u2[3],'T',e);ee <- gsub(u22[3],'T',ee)
-e <- gsub(u2[4],'T',e);ee <- gsub(u22[4],'T',ee)
-e <- gsub(u2[5],'T',e);ee <- gsub(u22[5],'T',ee)
-e <- gsub(u2[6],'T',e);ee <- gsub(u22[6],'T',ee)
+e <- gsub(u_lat2[1],'T',ba.coord$lat);ee <- gsub(u_long2[1],'T',ba.coord$long)
+e <- gsub(u_lat2[2],'T',e);ee <- gsub(u_long2[2],'T',ee)
+e <- gsub(u_lat2[3],'T',e);ee <- gsub(u_long2[3],'T',ee)
+e <- gsub(u_lat2[4],'T',e);ee <- gsub(u_long2[4],'T',ee)
+e <- gsub(u_lat2[5],'T',e);ee <- gsub(u_long2[5],'T',ee)
+e <- gsub(u_lat2[6],'T',e);ee <- gsub(u_long2[6],'T',ee)
 
-# separando pelo simbolo que coloquei
-e <- strsplit(e,'T+')
-ee <- strsplit(ee,'T+')
+e <- strsplit(e,'T+');ee <- strsplit(ee,'T+')
 
-# antes pra ver se todas deram certo nomeia por 'LAT' ou 'LONG'
-ba$LAT <- convert(e);ba$LONG <- convert(ee) 
-is.numeric(ba$LAT);is.numeric(ba$LONG)
-ba$LAT;ba$LONG
+ba.coord$LAT <- convert(e);ba.coord$LONG <- convert(ee) 
+ba.coord$LAT;ba.coord$LONG
 str(ba)
 
+row.names(ba.coord[!complete.cases(ba.coord$LAT),]) # 86, 98, 100, 160, 300
+row.names(ba.coord[!complete.cases(ba.coord$LONG),]) # 98, 291
 
-# precisa arrumar os NAs em ba$LAT[78,90,92,151,291,348,360] e ba$LONG[90,282] refazer a partir do 'e' ou 'ee' 
-y <- gsub(u2[1],'T',ba$lat[78])
-y <- gsub(u2[2],'T',y)
-y <- gsub(u2[3],'T',y)
-y <- gsub(u2[4],'T',y)
-y <- gsub(u2[5],'T',y)
-y <- gsub(u2[6],'T',y)
+y <- gsub(u_lat2[1],'T',ba.coord[c('86', '98', '100', '160', '300'),'lat'])
+y <- gsub(u_lat2[2],'T',y)
+y <- gsub(u_lat2[3],'T',y)
+y <- gsub(u_lat2[4],'T',y)
+y <- gsub(u_lat2[5],'T',y)
+y <- gsub(u_lat2[6],'T',y)
 y <- gsub('º','T',y)
 y <- strsplit(y,'T+')
-# ba$LAT[78]
-dec=c(as.numeric(y[[1]][1]),as.numeric(y[[1]][2]),as.numeric(e[[1]][3]))
-ba$LAT[78] <- abs(dec[1])+dec[2]/60+dec[3]/3600
-# ba$LAT[90]
-y <- gsub(u2[1],'T',ba$lat[90])
-y <- gsub(u2[2],'T',y)
-y <- gsub(u2[3],'T',y)
-y <- gsub(u2[4],'T',y)
-y <- gsub(u2[5],'T',y)
-y <- gsub(u2[6],'T',y)
-y <- gsub('º','T',y)
-y <- strsplit(y,'T+')
-# ba$LAT[90]
-dec=c(as.numeric(y[[1]][1]),as.numeric(y[[1]][2]),as.numeric(e[[1]][3]))
-ba$LAT[90] <- abs(dec[1])+dec[2]/60+dec[3]/3600
-# ba$LAT [92]
-y <- gsub(u2[1],'T',ba$lat[92])
-y <- gsub(u2[2],'T',y)
-y <- gsub(u2[3],'T',y)
-y <- gsub(u2[4],'T',y)
-y <- gsub(u2[5],'T',y)
-y <- gsub(u2[6],'T',y)
-y <- gsub('º','T',y)
-y <- strsplit(y,'T+')
-# ba$LAT[92]
-dec=c(as.numeric(y[[1]][1]),as.numeric(y[[1]][2]),as.numeric(e[[1]][3]))
-ba$LAT[92] <- abs(dec[1])+dec[2]/60+dec[3]/3600
-# ba$LAT[151]
-y <- gsub(u2[1],'T',ba$lat[151])
-y <- gsub(u2[2],'T',y)
-y <- gsub(u2[3],'T',y)
-y <- gsub(u2[4],'T',y)
-y <- gsub(u2[5],'T',y)
-y <- gsub(u2[6],'T',y)
-y <- gsub('º','T',y)
-y <- strsplit(y,'T+')
-# ba$LAT[151]
-dec=c(as.numeric(y[[1]][1]),as.numeric(y[[1]][2]),as.numeric(e[[1]][3]))
-ba$LAT[151] <- abs(dec[1])+dec[2]/60+dec[3]/3600
-# ba$LAT[291]
-y <- gsub(u2[1],'T',ba$lat[291])
-y <- gsub(u2[2],'T',y)
-y <- gsub(u2[3],'T',y)
-y <- gsub(u2[4],'T',y)
-y <- gsub(u2[5],'T',y)
-y <- gsub(u2[6],'T',y)
-y <- gsub('º','T',y)
-y <- strsplit(y,'T+')
-# ba$LAT[291]
-dec=c(as.numeric(y[[1]][1]),as.numeric(y[[1]][2]),as.numeric(e[[1]][3]))
-ba$LAT[291] <- abs(dec[1])+dec[2]/60+dec[3]/3600
-# ba$LAT[348]
-a <- c(substr(ba$lat[348],1,2),substr(ba$lat[348],4,5),substr(ba$lat[348],6,9))
-# ba$LAT[348]
-dec=c(as.numeric(a[[1]]),as.numeric(a[[2]]),as.numeric(a[[3]]))
-ba$LAT[348] <- abs(dec[1])+dec[2]/60+dec[3]/3600
-# ba$LAT[360]
-y <- gsub(u2[1],'T',ba$lat[260])
-y <- gsub(u2[2],'T',y)
-y <- strsplit(y,'T+')
-# ba$LAT[291]
-dec=c(as.numeric(y[[1]][1]),as.numeric(y[[1]][2]),as.numeric(e[[1]][3]))
-ba$LAT[360] <- abs(dec[1])+dec[2]/60+dec[3]/3600
-ba$LAT # removi todos NAs de ba$LAT
-# ba$LONG[90,282] refazer a partir do 'e' ou 'ee' 
-y <- gsub(u2[1],'T',ba$long[90])
-y <- gsub(u2[2],'T',y)
-y <- gsub(u2[3],'T',y)
-y <- gsub('º','T',y)
-y <- strsplit(y,'T+')
-# ba$LONG[90]
-dec=c(as.numeric(y[[1]][1]),as.numeric(y[[1]][2]),as.numeric(e[[1]][3]))
-ba$LONG[90] <- abs(dec[1])+dec[2]/60+dec[3]/3600
-# ba$LONG[282]
-y <- gsub(u2[1],'T',ba$long[282])
-y <- gsub(u2[2],'T',y)
-y <- gsub('º','T',y)
-y <- strsplit(y,'T+')
-# ba$LONG[282]
-dec=c(as.numeric(y[[1]][1]),as.numeric(y[[1]][2]),as.numeric(e[[1]][3]))
-ba$LONG[282] <- abs(dec[1])+dec[2]/60+dec[3]/3600
-ba$LAT;ba$LONG # #conferindo se removi todos NAs
+y <- convert(y)
+ba.coord[c('86', '98', '100', '160', '300'),'LAT'] <- y
 
-# colocar os valores na coluna certa
-ba$lat <- ba$LAT;ba$long <- ba$LONG
-ba$lat;ba$long
+y <- gsub(u_long2[1],'T',ba.coord[c('98','291'),'long'])
+y <- gsub(u_long2[2],'T',y)
+y <- gsub(u_long2[3],'T',y)
+y <- gsub('º','T',y)
+y <- strsplit(y,'T+')
+y <- convert(y)
+ba.coord[c('98','291'),'LONG'] <- y
 
-# mudar o sinal
-str(ba)
-ba$lat <- (ba$lat)*(-1);ba$long <- (ba$long)*(-1)
-ba$lat;ba$long
+ba.coord$LAT;ba.coord$LONG
+ba.coord$lat <- ba.coord$LAT*(-1);ba.coord$long <- ba.coord$LONG*(-1)
+ba.coord$lat;ba.coord$long
 
-###### plotar mapa e pontos pra ver se algum caiu fora do AM
-#install.packages('ggmap')
 library(ggmap)
-map_ba <- 'State of Bahia'
-ba_map <- qmap(map_ba,zoom=6)
-ba_map+geom_point(aes(x = long, y = lat , color = 'red'), 
-                  data = ba)
+qmap('State of Bahia',zoom=6)+geom_point(aes(x = long, y = lat , color = 'red'), 
+                  data = ba.coord)
 
-### transformar p/.csv e depois .xls 
-write.csv2(ba,file='BA_mrq.csv',sep=';')
+write.csv2(ba.coord,file='BA_mrq.csv')
 
 
 ###################### CE ######################

@@ -211,4 +211,4 @@ map_br <- "Brasil"
 br <- qmap(map_br,zoom=4)
 br+geom_point(aes(x = long, y = lat, color = 'red'),
                    data = a)
-write.csv(a,'UFcoords.csv',sep=';')
+write.csv2(a,'UF_coords.csv',sep=';')
