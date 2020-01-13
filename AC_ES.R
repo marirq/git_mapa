@@ -1,7 +1,7 @@
 ################### AC ################### 
 ac <- read.csv('AC.csv', header=TRUE, sep=';') # 8282 propriedades
 str(ac)
-names(ac)[c(11,12)] <- c('lat','long')
+
 ac.coord <- ac[which(ac$lat!=''),] # todas as linhas tem coordenadas
 ac.coord$lat <- as.numeric(sub(',','.',ac.coord$lat)); ac.coord$long <- as.numeric(sub(',','.',ac.coord$long))
 str(ac.coord)
@@ -10,7 +10,6 @@ library(ggmap)
 ac_map <- qmap('State of Acre',zoom=6)
 ac_map+geom_point(aes(x = long, y = lat, color = 'red' ), 
                   data = ac.coord)
-
 write.csv2(ac.coord,file='AC_mrq.csv')
 
 ###################### AM ######################
